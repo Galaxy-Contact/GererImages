@@ -1,0 +1,34 @@
++--------------------------------------+
+|   Flickr Photo Metadata              |
+|   Created by Bulkr on Feb 07, 2018   |
+|   http://clipyourphotos.com/bulkr    |
++--------------------------------------+
+
++--------+
+|  INFO  |
++--------+
+Photographer : NASA on The Commons
+Photo URL    : https://www.flickr.com/photos/nasacommons/9417164262/
+License      : Creative Commons (http://creativecommons.org/licenses)
+Taken Date   : Sat Jan 1 00:00:00 GMT+0100 1983
+Upload Date  : Thu Aug 1 18:04:57 GMT+0200 2013
+Views        : 8,678
+Comments     : 0
+
+
++---------+
+|  TITLE  |
++---------+
+Icing Research Tunnel
+
+
++---------------+
+|  DESCRIPTION  |
++---------------+
+(C-1983-870): This plan drawing locates the IRT’s major features.  The refrigeration building that serves the cooling coils (not shown) is located to the upper left.  The control room and test section are on the test chamber’s second floor.
+
+
++--------+
+|  TAGS  |
++--------+
+(no tags)
