@@ -16,7 +16,6 @@ import static java.nio.file.Files.newDirectoryStream;
 
 public class BrowseController implements ActionListener {
 
-    private Path filePath;
     private DefaultListModel<DataModel> data;
 
     public BrowseController(DefaultListModel<DataModel> data) {
@@ -25,18 +24,16 @@ public class BrowseController implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getActionCommand().equals("Browse")) {
-            JFileChooser fileChooser = new JFileChooser(".");
-            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        JFileChooser fileChooser = new JFileChooser(".");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            int clicked = fileChooser.showOpenDialog(null);
-            if (clicked == fileChooser.getApproveButtonMnemonic()) {
-                filePath = fileChooser.getSelectedFile().toPath();
-                try {
-                    loadImages(filePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        int clicked = fileChooser.showOpenDialog(null);
+        if (clicked == fileChooser.getApproveButtonMnemonic()) {
+            Path filePath = fileChooser.getSelectedFile().toPath();
+            try {
+                loadImages(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -52,19 +49,20 @@ public class BrowseController implements ActionListener {
             String fileName = fullName.substring(0, fullName.lastIndexOf("."));
             String fileExtension = fullName.substring(fullName.lastIndexOf(".") + 1);
             if (fileExtension.equals("txt")) {
-                data.addElement(new DataModel(fileName, loadInfos(file)));
+                data.addElement(new DataModel(file.toString(), fileName, loadInfos(file)));
             }
         }
 
     }
 
     private String loadInfos(Path file) throws IOException {
-        String res = "", line;
+        StringBuilder res = new StringBuilder();
+        String line;
         File f = file.toFile();
         BufferedReader br = new BufferedReader(new FileReader(f));
         while ((line = br.readLine()) != null) {
-            res += "\n" + line;
+            res.append("\n").append(line);
         }
-        return res;
+        return res.toString();
     }
 }

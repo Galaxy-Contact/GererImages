@@ -1,17 +1,17 @@
 package model;
 
+import javax.swing.*;
 import java.io.File;
 
 public class ExcelHandler {
 
-    private String outputFilename;
     private File outputFile;
 
-    public void setOutputFilename(String outputFilename) {
-        this.outputFilename = outputFilename;
+    public void setOutputFile(File outputFile) {
+        this.outputFile = outputFile;
     }
 
-    public void writeToFile() {
+    public void writeToFile(DefaultListModel<DataModel> data) {
 
     }
 }
