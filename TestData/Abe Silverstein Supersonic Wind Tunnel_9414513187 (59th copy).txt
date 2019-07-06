@@ -1,0 +1,34 @@
++--------------------------------------+
+|   Flickr Photo Metadata              |
+|   Created by Bulkr on Feb 07, 2018   |
+|   http://clipyourphotos.com/bulkr    |
++--------------------------------------+
+
++--------+
+|  INFO  |
++--------+
+Photographer : NASA on The Commons
+Photo URL    : https://www.flickr.com/photos/nasacommons/9414513187/
+License      : Creative Commons (http://creativecommons.org/licenses)
+Taken Date   : Fri Jan 1 00:00:00 GMT+0100 1988
+Upload Date  : Thu Aug 1 18:23:55 GMT+0200 2013
+Views        : 8,753
+Comments     : 0
+
+
++---------+
+|  TITLE  |
++---------+
+Abe Silverstein Supersonic Wind Tunnel
+
+
++---------------+
+|  DESCRIPTION  |
++---------------+
+(C-1988-04806): The ASWT’s capabilities are illustrated here by propulsion cycle tests of the Space Shuttle stack with the main and solid rocket booster engines burning.  The rocket plumes have both thermal and aerodynamic effects on the vehicle.
+
+
++--------+
+|  TAGS  |
++--------+
+(no tags)

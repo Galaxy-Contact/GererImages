@@ -22,10 +22,13 @@ public class MainGUI extends JFrame {
     private JTextArea txtInfos = new JTextArea();
     private JLabel lblDirectory = new JLabel("List images");
     private JLabel lblInfos = new JLabel("Information");
-    private BrowseController browseController = new BrowseController(listImageData);
-    private ExportController exportController = new ExportController(listImageData, excel);
+    private BrowseController browseController = new BrowseController(listImageData, this);
+    private ExportController exportController = new ExportController(listImageData, excel, this);
     private Thumbnail thumbnail = new Thumbnail();
     private ListListener listListener = new ListListener(listImageData, thumbnail, txtInfos);
+
+    private Font fontLabel = new Font("open sans", Font.BOLD, 14);
+    private Font fontText = new Font("open sans", Font.PLAIN, 12);
 
 
     public MainGUI() {
@@ -63,6 +66,7 @@ public class MainGUI extends JFrame {
         JScrollPane listScroller = new JScrollPane(listImage);
 
         JScrollPane infoScroller = new JScrollPane(txtInfos);
+        txtInfos.setLineWrap(true);
         txtInfos.setToolTipText("Information shown here");
 
         pnlDirectory.add(lblDirectory, BorderLayout.NORTH);
@@ -91,6 +95,11 @@ public class MainGUI extends JFrame {
                 return renderer;
             }
         });
+
+        lblDirectory.setFont(fontLabel);
+        lblInfos.setFont(fontLabel);
+        listImage.setFont(fontText);
+        txtInfos.setFont(fontText);
 
     }
 

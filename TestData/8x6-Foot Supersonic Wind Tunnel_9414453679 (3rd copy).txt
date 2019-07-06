@@ -1,0 +1,37 @@
++--------------------------------------+
+|   Flickr Photo Metadata              |
+|   Created by Bulkr on Feb 07, 2018   |
+|   http://clipyourphotos.com/bulkr    |
++--------------------------------------+
+
++--------+
+|  INFO  |
++--------+
+Photographer : NASA on The Commons
+Photo URL    : https://www.flickr.com/photos/nasacommons/9414453679/
+License      : Creative Commons (http://creativecommons.org/licenses)
+Taken Date   : Wed Jul 31 00:00:00 GMT+0200 1957
+Upload Date  : Mon Jul 31 10:23:51 GMT+0200 2017
+Views        : 52,329
+Comments     : 0
+
+
++---------+
+|  TITLE  |
++---------+
+8x6-Foot Supersonic Wind Tunnel
+
+
++---------------+
+|  DESCRIPTION  |
++---------------+
+After 1957, the 8 x 6 Supersonic Wind Tunnel’s test section featured the perforated walls shown here with technicians preparing a ramjet inlet for testing.  The perforations allowed the tunnel to operate at transonic speeds.  Note the eccentrically mounted observation window in the sidewall. 
+
+Image # : C-1957-45653
+Date: July 31, 1957
+
+
++--------+
+|  TAGS  |
++--------+
+"Wind Tunnel" "Glenn Research Center" 

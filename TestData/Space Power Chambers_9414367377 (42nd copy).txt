@@ -1,0 +1,34 @@
++--------------------------------------+
+|   Flickr Photo Metadata              |
+|   Created by Bulkr on Feb 07, 2018   |
+|   http://clipyourphotos.com/bulkr    |
++--------------------------------------+
+
++--------+
+|  INFO  |
++--------+
+Photographer : NASA on The Commons
+Photo URL    : https://www.flickr.com/photos/nasacommons/9414367377/
+License      : Creative Commons (http://creativecommons.org/licenses)
+Taken Date   : Wed Jan 1 00:00:00 GMT+0100 1964
+Upload Date  : Thu Aug 1 18:04:55 GMT+0200 2013
+Views        : 8,225
+Comments     : 0
+
+
++---------+
+|  TITLE  |
++---------+
+Space Power Chambers
+
+
++---------------+
+|  DESCRIPTION  |
++---------------+
+(C-1964-68846): A Centaur upper stage, equipped with two RL-10 engines, is being lowered into the SPC’s Chamber Number 1 through its domed hatch.
+
+
++--------+
+|  TAGS  |
++--------+
+(no tags)
