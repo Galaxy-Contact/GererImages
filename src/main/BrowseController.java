@@ -6,9 +6,6 @@ import model.DataModel;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
@@ -30,8 +27,9 @@ public class BrowseController implements ActionListener {
         JFileChooser fileChooser = new JFileChooser(".");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        LoadingWindow loading = new LoadingWindow("Saving to excel...", parent);
+        LoadingWindow loading = new LoadingWindow("Loading images...", parent);
         loading.setVisible(true);
+
 
         int clicked = fileChooser.showOpenDialog(null);
         if (clicked == fileChooser.getApproveButtonMnemonic()) {
@@ -44,6 +42,7 @@ public class BrowseController implements ActionListener {
         }
 
         loading.dispose();
+
     }
 
     private void loadImages(Path filePath) throws IOException {
@@ -56,21 +55,12 @@ public class BrowseController implements ActionListener {
                 continue;
             String fileName = fullName.substring(0, fullName.lastIndexOf("."));
             String fileExtension = fullName.substring(fullName.lastIndexOf(".") + 1);
-            if (fileExtension.equals("txt")) {
-                data.addElement(new DataModel(data.size(), file.toString(), fileName, loadInfos(file)));
+            if (!fileExtension.equals("txt")) {
+                DataModel newElement = new DataModel(data.size(), file.toString(), fileName, fileExtension);
+                newElement.loadInfos(newElement.getDirectory());
+                data.addElement(newElement);
             }
         }
 
-    }
-
-    private String loadInfos(Path file) throws IOException {
-        StringBuilder res = new StringBuilder();
-        String line;
-        File f = file.toFile();
-        BufferedReader br = new BufferedReader(new FileReader(f));
-        while ((line = br.readLine()) != null) {
-            res.append("\n").append(line);
-        }
-        return res.toString();
     }
 }

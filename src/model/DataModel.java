@@ -1,7 +1,13 @@
 package model;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.Arrays;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public class DataModel {
@@ -18,6 +24,7 @@ public class DataModel {
             "23_Exposure_PUBLIC", "24_Sensitivity_PUBLIC", "25_Manufacturer_PUBLIC", "26_Model_PUBLIC",
             "27_User_Comment_INTERNE", "28_Propriétaire_PUBLIC", "29_OPTION_1", "30_OPTION_2", "31_OPTION_3"};
 
+    private String[] deleteList = new String[] {"<strong>", "</strong>", "&quot;", "<b>", "</b>", "<br>", "<i>",};
 
     private HashMap<String, String> parsedData = new HashMap<>();
 
@@ -36,21 +43,26 @@ public class DataModel {
         return infos;
     }
 
-    public DataModel(int id, String directory, String fileName, String infos) {
+    public DataModel(int id, String directory, String fileName, String imageExtension) {
         this.fileName = fileName;
         this.infos = infos;
         this.directory = directory;
-        this.imageExtension = guessImageExtension(directory);
         this.id = id;
+        this.imageExtension = imageExtension;
     }
 
-    private String guessImageExtension(String directory) {
-        for (String ext : listImageExtensions) {
-            if (new File(directory.replaceAll(".txt", ext)).isFile())
-                return ext;
+    public void loadInfos(String directoryToImage) throws IOException {
+        StringBuilder res = new StringBuilder();
+        String line;
+        String filePath = directoryToImage.replaceAll(imageExtension, "txt");
+        File f = new File(filePath);
+        BufferedReader br = new BufferedReader(new FileReader(f));
+        while ((line = br.readLine()) != null) {
+            res.append("\n").append(line);
         }
-        return "";
+        infos = res.toString();
     }
+
 
     public String getImageExtension() {
         return imageExtension;
@@ -60,12 +72,17 @@ public class DataModel {
         String[] splited = infos.split("\n");
         for (int i = 1; i < champs.length; i ++)
             parsedData.put(champs[i], "");
+        for (int i = 0; i < splited.length; i ++)
+            splited[i] = splited[i].trim();
         parsedData.put(champs[1], (id + 1) + "");
-        parsedData.put(champs[4], getBigText(splited, "TITLE"));
-        parsedData.put(champs[5], getTakenDate(splited));
-        parsedData.put(champs[9], getFL(splited));
-        parsedData.put(champs[11], getBigText(splited, "DESCRIPTION"));
-        parsedData.put(champs[13], getTags(splited));
+        parsedData.put(champs[4], getBigText(splited, "TITLE").replaceAll("\"", "\"\""));
+        parsedData.put(champs[5], getTakenDate(splited).replaceAll("\"", "\"\""));
+        parsedData.put(champs[9], getFL(splited).replaceAll("\"", "\"\""));
+        parsedData.put(champs[10], parsedData.get(champs[4]));
+        parsedData.put(champs[11], htmlStrip(getBigText(splited, "DESCRIPTION")).replaceAll("\"", "\"\""));
+        parsedData.put(champs[13], getTags(splited).replaceAll("\"", "\"\""));
+
+
     }
 
     private void debugParsed() {
@@ -75,17 +92,27 @@ public class DataModel {
     }
 
     private String getBigText(String[] splited, String group) {
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < splited.length; i ++) {
-            if (splited[i].contains(group))
-                return splited[i + 2];
+            if (splited[i].contains(group)) {
+                i += 2;
+                while (splited[i].trim().equals(""))
+                    i ++;
+                while ((i < splited.length) && (!splited[i].startsWith("+-"))) {
+                    if (!splited[i].trim().equals(""))
+                        res.append(splited[i].trim()).append(" ");
+                    i ++;
+                }
+                break;
+            }
         }
-        return "";
+        return res.toString();
     }
 
     private String getTakenDate(String[] splited) {
         for (String s : splited) {
             if (s.startsWith("Taken Date"))
-                return s.substring(s.indexOf(":") + 2);
+                return s.substring(s.indexOf(":") + 1).trim();
         }
         return "";
     }
@@ -109,13 +136,73 @@ public class DataModel {
             if (!t.equals(""))
                 tags.append(t).append(", ");
         }
-        return tags.substring(0, tags.length() - 3);
+        if (tags.charAt(tags.length() - 1) == '\"')
+            return tags.substring(0, tags.length() - 3);
+        else
+            return tags.substring(0, tags.length() - 2);
+    }
+
+    private String delete(String s, String target) {
+        int pos = s.indexOf(target);
+        while (pos >= 0) {
+            s = s.substring(0, pos) + s.substring(pos + target.length());
+            pos = s.indexOf(target);
+        }
+        return s;
+    }
+
+    private String deleteHashtag(String s) {
+        int pos = s.indexOf("#");
+        while (pos >= 0) {
+            int posEnd = pos + 1;
+            while ((posEnd < s.length() - 1) && (s.charAt(posEnd + 1) != ' '))
+                posEnd ++;
+            s = s.substring(0, pos) + s.substring(posEnd + 1);
+            pos = s.indexOf("#");
+        }
+        return s;
+    }
+
+    private String deleteSentence(String s, String targetBegin, String targetEnd) {
+        int posBegin = s.indexOf(targetBegin);
+        while (posBegin >= 0) {
+            int posEnd = s.indexOf(targetEnd, posBegin + 1);
+            while ((posBegin > 0) && (s.charAt(posBegin - 1) != '.'))
+                posBegin --;
+            s = s.substring(0, posBegin) + s.substring(posEnd + targetEnd.length());
+            posBegin = s.indexOf(targetBegin);
+        }
+        return s;
+    }
+
+    private String htmlStrip(String s) {
+//        System.out.println("Striping: " + s);
+
+        s = deleteHashtag(s);
+        s = deleteSentence(s, "<a", "a>");
+
+        for (String target : deleteList)
+            s = delete(s, target);
+
+//        System.out.println("Result  : " + s);
+
+        return s;
     }
 
 
-
     public void parseImage() {
-//        File imageFile = new File(directory.replaceAll(".txt", imageExtension));
+        File imageFile = new File(directory.replaceAll(".txt", imageExtension));
+        BufferedImage brImage;
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+        try {
+            brImage = ImageIO.read(imageFile);
+            parsedData.put(champs[14], df.format(imageFile.length() / 1024.0 / 1024.0));
+            parsedData.put(champs[15], brImage.getWidth() + "");
+            parsedData.put(champs[16], brImage.getHeight() + "");
 
+        } catch (IOException e) {
+            System.out.println("Not found image at " + directory.replaceAll(".txt", imageExtension));
+        }
     }
 }

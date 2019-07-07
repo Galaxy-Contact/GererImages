@@ -27,6 +27,8 @@ public class MainGUI extends JFrame {
     private Thumbnail thumbnail = new Thumbnail();
     private ListListener listListener = new ListListener(listImageData, thumbnail, txtInfos);
 
+    private JProgressBar progress = new JProgressBar(0, 100);
+
     private Font fontLabel = new Font("open sans", Font.BOLD, 14);
     private Font fontText = new Font("open sans", Font.PLAIN, 12);
 
