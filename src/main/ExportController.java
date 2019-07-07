@@ -1,5 +1,6 @@
 package main;
 
+import com.drew.imaging.ImageProcessingException;
 import gui.LoadingWindow;
 import model.DataModel;
 import model.ExcelHandler;
@@ -39,7 +40,13 @@ public class ExportController implements ActionListener {
         excel.setOutputFile(exportChooser.getSelectedFile());
         for (int i = 0; i < data.size(); i ++) {
             data.get(i).parseData();
-            data.get(i).parseImage();
+            try {
+                data.get(i).parseImage();
+            } catch (ImageProcessingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         try {

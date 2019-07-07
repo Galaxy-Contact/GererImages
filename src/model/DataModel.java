@@ -1,5 +1,14 @@
 package model;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifDirectoryBase;
+import com.drew.metadata.exif.ExifSubIFDDescriptor;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -14,7 +23,6 @@ public class DataModel {
 
     private String fileName, imageExtension, infos, directory;
     private int id;
-    private String[] listImageExtensions = new String[]{".png", ".jpg", ".jpeg", ".gif", ".bmp"};
     private String[] champs = new String[]{"", "1_Index_INTERNE", "2_Mission_PUBLIC", "3_Référence_Nasa_avec_Titre_INTERNE",
             "4_Référence_Nasa_INTERNE", "5_Date_de_prise_de_vue_/_Traitement_de_l’image_PUBLIC",
             "6_Date_de_traitement_de_l’image_PUBLIC", "7_Référence_Galaxy_PUBLIC", "8_Référence_Nasa_ou_FL/Galaxy_INTERNE",
@@ -24,7 +32,7 @@ public class DataModel {
             "23_Exposure_PUBLIC", "24_Sensitivity_PUBLIC", "25_Manufacturer_PUBLIC", "26_Model_PUBLIC",
             "27_User_Comment_INTERNE", "28_Propriétaire_PUBLIC", "29_OPTION_1", "30_OPTION_2", "31_OPTION_3"};
 
-    private String[] deleteList = new String[] {"<strong>", "</strong>", "&quot;", "<b>", "</b>", "<br>", "<i>",};
+    private String[] deleteList = new String[]{"<strong>", "</strong>", "&quot;", "<b>", "</b>", "<br>", "<i>",};
 
     private HashMap<String, String> parsedData = new HashMap<>();
 
@@ -35,9 +43,13 @@ public class DataModel {
     public String getDirectory() {
         return directory;
     }
+
     public String getFileName() {
         return fileName;
     }
+
+    private Metadata metadata;
+    private ExifSubIFDDirectory exifDirectory;
 
     public String getInfos() {
         return infos;
@@ -70,9 +82,9 @@ public class DataModel {
 
     public void parseData() {
         String[] splited = infos.split("\n");
-        for (int i = 1; i < champs.length; i ++)
+        for (int i = 1; i < champs.length; i++)
             parsedData.put(champs[i], "");
-        for (int i = 0; i < splited.length; i ++)
+        for (int i = 0; i < splited.length; i++)
             splited[i] = splited[i].trim();
         parsedData.put(champs[1], (id + 1) + "");
         parsedData.put(champs[4], getBigText(splited, "TITLE").replaceAll("\"", "\"\""));
@@ -81,27 +93,25 @@ public class DataModel {
         parsedData.put(champs[10], parsedData.get(champs[4]));
         parsedData.put(champs[11], htmlStrip(getBigText(splited, "DESCRIPTION")).replaceAll("\"", "\"\""));
         parsedData.put(champs[13], getTags(splited).replaceAll("\"", "\"\""));
-
-
     }
 
     private void debugParsed() {
-        for (int i = 1; i < champs.length; i ++)
+        for (int i = 1; i < champs.length; i++)
             if (!parsedData.get(champs[i]).equals(""))
                 System.out.println(champs[i] + ": " + parsedData.get(champs[i]));
     }
 
     private String getBigText(String[] splited, String group) {
         StringBuilder res = new StringBuilder();
-        for (int i = 0; i < splited.length; i ++) {
+        for (int i = 0; i < splited.length; i++) {
             if (splited[i].contains(group)) {
                 i += 2;
                 while (splited[i].trim().equals(""))
-                    i ++;
+                    i++;
                 while ((i < splited.length) && (!splited[i].startsWith("+-"))) {
                     if (!splited[i].trim().equals(""))
                         res.append(splited[i].trim()).append(" ");
-                    i ++;
+                    i++;
                 }
                 break;
             }
@@ -156,7 +166,7 @@ public class DataModel {
         while (pos >= 0) {
             int posEnd = pos + 1;
             while ((posEnd < s.length() - 1) && (s.charAt(posEnd + 1) != ' '))
-                posEnd ++;
+                posEnd++;
             s = s.substring(0, pos) + s.substring(posEnd + 1);
             pos = s.indexOf("#");
         }
@@ -168,7 +178,7 @@ public class DataModel {
         while (posBegin >= 0) {
             int posEnd = s.indexOf(targetEnd, posBegin + 1);
             while ((posBegin > 0) && (s.charAt(posBegin - 1) != '.'))
-                posBegin --;
+                posBegin--;
             s = s.substring(0, posBegin) + s.substring(posEnd + targetEnd.length());
             posBegin = s.indexOf(targetBegin);
         }
@@ -189,8 +199,45 @@ public class DataModel {
         return s;
     }
 
+    public void loadMetaData() throws ImageProcessingException, IOException {
+        File image = new File(directory);
+        metadata = ImageMetadataReader.readMetadata(image);
+        exifDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+    }
 
-    public void parseImage() {
+    private void loadExif() {
+        for (Directory directory : metadata.getDirectories()) {
+            for (Tag tag : directory.getTags()) {
+                switch (tag.getTagType()) {
+                    case ExifSubIFDDirectory.TAG_X_RESOLUTION:
+                        if (parsedData.get(champs[18]).equals(""))
+                            parsedData.put(champs[18], tag.getDescription().split(" ")[0]);
+                        break;
+                    case ExifSubIFDDirectory.TAG_FOCAL_LENGTH:
+                        parsedData.put(champs[21], tag.getDescription());
+                        break;
+                    case ExifSubIFDDirectory.TAG_APERTURE:
+                        parsedData.put(champs[22], tag.getDescription());
+                        break;
+                    case ExifSubIFDDirectory.TAG_EXPOSURE_TIME:
+                        parsedData.put(champs[23], tag.getDescription());
+                        break;
+                    case ExifSubIFDDirectory.TAG_SENSITIVITY_TYPE:
+                        parsedData.put(champs[24], tag.getDescription());
+                        break;
+                    case ExifSubIFDDirectory.TAG_MODEL:
+                        parsedData.put(champs[26], tag.getDescription());
+                        break;
+                }
+            }
+        }
+        for (String champ : champs)
+            parsedData.putIfAbsent(champ, "");
+
+    }
+
+
+    public void parseImage() throws ImageProcessingException, IOException {
         File imageFile = new File(directory.replaceAll(".txt", imageExtension));
         BufferedImage brImage;
         DecimalFormat df = new DecimalFormat();
@@ -204,5 +251,10 @@ public class DataModel {
         } catch (IOException e) {
             System.out.println("Not found image at " + directory.replaceAll(".txt", imageExtension));
         }
+
+        loadMetaData();
+        loadExif();
+
+//        debugParsed();
     }
 }

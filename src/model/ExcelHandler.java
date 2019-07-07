@@ -39,6 +39,7 @@ public class ExcelHandler {
             for (String champName : champs) {
                 if (!champName.equals("")) {
                     String content = hash.get(champName);
+//                    System.out.println(content);
                     if (!content.equals(","))
                         content = "\"" + content + "\",";
                     else
