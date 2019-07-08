@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 public class DataModel {
 
+
+    private File imageFile;
     private String fileName, imageExtension, infos, directory;
     private int id;
     private String[] champs = new String[]{"", "1_Index_INTERNE", "2_Mission_PUBLIC", "3_Référence_Nasa_avec_Titre_INTERNE",
@@ -60,8 +62,10 @@ public class DataModel {
     public void loadInfos(String directoryToImage) throws IOException {
         StringBuilder res = new StringBuilder();
         String line;
-        String filePath = directoryToImage.replaceAll(imageExtension, "txt");
+        String filePath = directoryToImage.replace("." + imageExtension, ".txt");
+        System.out.println(filePath);
         File f = new File(filePath);
+        System.out.println(f.isFile());
         if (!f.isFile())
             return;
         BufferedReader br = new BufferedReader(new FileReader(f));
@@ -69,16 +73,11 @@ public class DataModel {
             res.append("\n").append(line);
         }
         infos = res.toString();
-    }
-
-
-    public String getImageExtension() {
-        return imageExtension;
+//        System.out.println(infos + "\n");
     }
 
     public void parseData() {
         parsedData.put(champs[1], (id + 1) + "");
-        parsedData.put(champs[3], fileName + "." + imageExtension);
         if (infos == null)
             return;
         String[] splited = infos.split("\n");
@@ -191,8 +190,7 @@ public class DataModel {
     }
 
     private void loadMetaData() throws ImageProcessingException, IOException {
-        File image = new File(directory);
-        metadata = ImageMetadataReader.readMetadata(image);
+        metadata = ImageMetadataReader.readMetadata(imageFile);
     }
 
     private void loadExif() {
@@ -201,18 +199,13 @@ public class DataModel {
         String dateCreated = "";
 
         for (Directory directory : metadata.getDirectories()) {
-//            System.out.println();
             for (Tag tag : directory.getTags()) {
-//                System.out.println(tag.getTagType() + " " + tag.getTagName() + "|" + tag.getDescription());
-                switch (tag.getTagName()) {
+                switch (tag.getTagName().trim()) {
                     case "File Modified Date":
                         parsedData.put(champs[6], tag.getDescription());
                         break;
                     case "Image Description":
                         parsedData.putIfAbsent(champs[11], tag.getDescription());
-                        break;
-                    case "X Resolution":
-                        parsedData.putIfAbsent(champs[18], tag.getDescription().split(" ")[0]);
                         break;
                     case "Detected File Type Name":
                         parsedData.put(champs[19], tag.getDescription());
@@ -247,7 +240,8 @@ public class DataModel {
                         parsedData.put(champs[29], tag.getDescription());
                         break;
                     case "Date/Time Original":
-                        dateCreated = tag.getDescription();
+                    case "Date/Time":
+                        parsedData.put(champs[5], tag.getDescription());
                         break;
                     case "Number of Components":
                         numChannel = Integer.parseInt(tag.getDescription().split(" ")[0]);
@@ -255,6 +249,19 @@ public class DataModel {
                     case "Data Precision":
                         bitDepth = Integer.parseInt(tag.getDescription().split(" ")[0]);
                         break;
+                    case "Keywords":
+                        parsedData.putIfAbsent(champs[13], tag.getDescription());
+                        break;
+                    case "Resolution Info": {
+                        if (parsedData.get(champs[18]) != null) {
+                            int currentDPI = Integer.parseInt(parsedData.get(champs[18]));
+                            int newDPI = Integer.parseInt(tag.getDescription().split("x")[0]);
+                            parsedData.put(champs[18], Math.max(currentDPI, newDPI) + "");
+                        } else
+                            parsedData.put(champs[18], tag.getDescription().split("x")[0]);
+                    }
+                    break;
+
                 }
             }
         }
@@ -268,13 +275,13 @@ public class DataModel {
 
 
     public void parseImage() throws ImageProcessingException, IOException {
-        File imageFile = new File(directory.replaceAll(".txt", imageExtension));
+        imageFile = new File(directory);
         BufferedImage brImage;
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
         try {
             brImage = ImageIO.read(imageFile);
-            parsedData.put(champs[14], df.format(imageFile.length() / 1000.0 / 1000.0));
+            parsedData.put(champs[14], df.format(imageFile.length() / 1024.0 / 1024.0));
             parsedData.put(champs[15], brImage.getWidth() + "");
             parsedData.put(champs[16], brImage.getHeight() + "");
 
@@ -291,9 +298,6 @@ public class DataModel {
         loadMetaData();
         loadExif();
         parsedData.putIfAbsent(champs[19], imageExtension.toUpperCase());
-
-        for (String champ : champs)
-            parsedData.putIfAbsent(champ, "");
 //        debugParsed();
     }
 }

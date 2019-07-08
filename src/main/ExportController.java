@@ -2,6 +2,7 @@ package main;
 
 import com.drew.imaging.ImageProcessingException;
 import gui.LoadingWindow;
+import gui.MainGUI;
 import model.DataModel;
 import model.ExcelHandler;
 
@@ -16,9 +17,9 @@ public class ExportController implements ActionListener {
 
     private DefaultListModel<DataModel> data;
     private ExcelHandler excel;
-    private JFrame parent;
+    private MainGUI parent;
 
-    public ExportController(DefaultListModel<DataModel> data, ExcelHandler excel, JFrame parent) {
+    public ExportController(DefaultListModel<DataModel> data, ExcelHandler excel, MainGUI parent) {
         this.data = data;
         this.excel = excel;
         this.parent = parent;
@@ -27,38 +28,37 @@ public class ExportController implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
-        LoadingWindow loading = new LoadingWindow("Saving to excel...", parent);
-        loading.setVisible(true);
-
-        JFileChooser exportChooser = new JFileChooser(".");
-        exportChooser.setFileFilter(new FileNameExtensionFilter("Excel File", "xlsx"));
-        exportChooser.setSelectedFile(new File("output.xlsx"));
-        int clicked = exportChooser.showSaveDialog(loading);
+        new Thread(() -> {
+            JFileChooser exportChooser = new JFileChooser(".");
+            exportChooser.setFileFilter(new FileNameExtensionFilter("Excel File", "xlsx"));
+            exportChooser.setSelectedFile(new File("output.xlsx"));
+            int clicked = exportChooser.showSaveDialog(parent);
 
 
-        if (clicked != exportChooser.getApproveButtonMnemonic()) {
-            loading.dispose();
-            return;
-        }
 
-        if (exportChooser.getSelectedFile().toString().endsWith("xlsx"))
-            excel.setOutputFile(exportChooser.getSelectedFile());
-        else
-            excel.setOutputFile(new File(exportChooser.getSelectedFile().toString() + ".xlsx"));
-        for (int i = 0; i < data.size(); i ++) {
-            data.get(i).parseData();
-            try {
-                data.get(i).parseImage();
-            } catch (ImageProcessingException | IOException e) {
-                e.printStackTrace();
+            if (clicked != exportChooser.getApproveButtonMnemonic()) {
+                return;
             }
-        }
 
-        try {
-            excel.writeToFile(data);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(parent, "ERROR " + e.getMessage());
-        }
-        loading.dispose();
+            if (exportChooser.getSelectedFile().toString().endsWith("xlsx"))
+                excel.setOutputFile(exportChooser.getSelectedFile());
+            else
+                excel.setOutputFile(new File(exportChooser.getSelectedFile().toString() + ".xlsx"));
+            for (int i = 0; i < data.size(); i ++) {
+                data.get(i).parseData();
+                try {
+                    data.get(i).parseImage();
+                } catch (ImageProcessingException | IOException e) {
+                    e.printStackTrace();
+                }
+                parent.getProgressBar().setValue((int) (((float) i) / data.size() * parent.getProgressBar().getMaximum() / 2));
+            }
+
+            try {
+                excel.writeToFile(data);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(parent, "ERROR " + e.getMessage());
+            }
+        }).start();
     }
 }

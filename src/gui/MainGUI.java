@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class MainGUI extends JFrame {
 
-    private ExcelHandler excel = new ExcelHandler();
+    private ExcelHandler excel = new ExcelHandler(this);
 
     private JPanel pnlMain;
     private JPanel pnlButtons;
@@ -24,8 +24,13 @@ public class MainGUI extends JFrame {
     private JLabel lblInfos = new JLabel("Information");
     private BrowseController browseController = new BrowseController(listImageData, this);
     private ExportController exportController = new ExportController(listImageData, excel, this);
-    private Thumbnail thumbnail = new Thumbnail();
-    private ListListener listListener = new ListListener(listImageData, thumbnail, txtInfos);
+    private ListListener listListener = new ListListener(listImageData, txtInfos);
+
+    public JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    private JProgressBar progressBar = new JProgressBar(0, 1000);
 
 
     private Font fontLabel = new Font("open sans", Font.BOLD, 14);
@@ -57,7 +62,7 @@ public class MainGUI extends JFrame {
         pnlMain = new JPanel(new GridLayout(1, 2));
         JPanel pnlDirectory = new JPanel(new BorderLayout());
         JPanel pnlInfos = new JPanel(new BorderLayout());
-        JPanel pnlInfoCenter = new JPanel(new GridLayout(2, 1));
+        JPanel pnlInfoCenter = new JPanel(new BorderLayout());
         pnlButtons = new JPanel(new FlowLayout());
 
         pnlMain.add(pnlDirectory);
@@ -75,7 +80,7 @@ public class MainGUI extends JFrame {
         pnlInfos.add(lblInfos, BorderLayout.NORTH);
         pnlInfos.add(pnlInfoCenter, BorderLayout.CENTER);
         pnlInfoCenter.add(infoScroller);
-        pnlInfoCenter.add(thumbnail);
+        pnlInfoCenter.add(progressBar, BorderLayout.SOUTH);
 
 
 

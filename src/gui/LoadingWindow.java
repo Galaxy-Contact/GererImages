@@ -11,5 +11,6 @@ public class LoadingWindow extends JFrame {
         setUndecorated(true);
         setLocation(parent.getLocation().x + (parent.getWidth() - getWidth()) / 2,
                 parent.getLocation().y + (parent.getHeight() - getHeight()) / 2);
+
     }
 }

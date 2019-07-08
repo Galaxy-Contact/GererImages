@@ -1,5 +1,7 @@
 package model;
 
+import gui.MainGUI;
+import main.Main;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -12,6 +14,7 @@ import java.util.HashMap;
 public class ExcelHandler {
 
     private File outputFile;
+    private MainGUI parent;
     private String[] champs = new String[]{"", "1_Index_INTERNE", "2_Mission_PUBLIC", "3_Référence_Nasa_avec_Titre_INTERNE",
             "4_Référence_Nasa_INTERNE", "5_Date_de_prise_de_vue_/_Traitement_de_l’image_PUBLIC",
             "6_Date_de_traitement_de_l’image_PUBLIC", "7_Référence_Galaxy_PUBLIC", "8_Référence_Nasa_ou_FL/Galaxy_INTERNE",
@@ -21,6 +24,9 @@ public class ExcelHandler {
             "23_Exposure_PUBLIC", "24_Sensitivity_PUBLIC", "25_Manufacturer_PUBLIC", "26_Model_PUBLIC",
             "27_User_Comment_INTERNE", "28_Mode_Flash_PUBLIC", "29_Aperture_Maxi_PUBLIC", "30_Propriétaire_PUBLIC", "31_OPTION_3"};
 
+    public ExcelHandler(MainGUI parent) {
+        this.parent = parent;
+    }
 
     public void setOutputFile(File outputFile) {
         this.outputFile = outputFile;
@@ -55,9 +61,9 @@ public class ExcelHandler {
             for (int j = 1; j < champs.length; j++) {
                 String content = hash.get(champs[j]);
                 Cell cell = row.createCell(j - 1);
-                cell.setCellValue(content);
-
+                cell.setCellValue((content != null) ? content : "");
             }
+            parent.getProgressBar().setValue((int) (((float) i) / length * parent.getProgressBar().getMaximum()));
         }
 
         for (int i = 0; i < champs.length;  i++)

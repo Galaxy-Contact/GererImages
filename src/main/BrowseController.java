@@ -1,11 +1,13 @@
 package main;
 
 import gui.LoadingWindow;
+import gui.MainGUI;
 import model.DataModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
@@ -15,9 +17,9 @@ import static java.nio.file.Files.newDirectoryStream;
 public class BrowseController implements ActionListener {
 
     private DefaultListModel<DataModel> data;
-    private JFrame parent;
+    private MainGUI parent;
 
-    public BrowseController(DefaultListModel<DataModel> data, JFrame parent) {
+    public BrowseController(DefaultListModel<DataModel> data, MainGUI parent) {
         this.data = data;
         this.parent = parent;
     }
@@ -27,16 +29,16 @@ public class BrowseController implements ActionListener {
         JFileChooser fileChooser = new JFileChooser(".");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        LoadingWindow loading = new LoadingWindow("Loading images...", parent);
-        loading.setVisible(true);
+//        LoadingWindow loading = new LoadingWindow("Loading images...", parent);
+//        loading.setVisible(true);
 
 
         int clicked = fileChooser.showOpenDialog(null);
 
         if (fileChooser.getSelectedFile() == null) {
-            loading.dispose();
             return;
         }
+
 
         if (clicked == fileChooser.getApproveButtonMnemonic()) {
             Path filePath = fileChooser.getSelectedFile().toPath();
@@ -47,25 +49,29 @@ public class BrowseController implements ActionListener {
             }
         }
 
-        loading.dispose();
-
     }
 
     private void loadImages(Path filePath) throws IOException {
-
         data.clear();
-        DirectoryStream<Path> stream = newDirectoryStream(filePath);
-        for (Path file : stream) {
-            String fullName = file.getFileName().toString();
+
+        File[] directory = new File(String.valueOf(filePath)).listFiles();
+
+        int total = directory.length;
+        int current = 0;
+
+        for (File file : directory) {
+            String fullName = file.getName();
             if (fullName.lastIndexOf(".") == -1)
                 continue;
             String fileName = fullName.substring(0, fullName.lastIndexOf("."));
             String fileExtension = fullName.substring(fullName.lastIndexOf(".") + 1);
             if (!fileExtension.equals("txt")) {
-                DataModel newElement = new DataModel(data.size(), file.toString(), fileName, fileExtension);
+                DataModel newElement = new DataModel(data.size(), file.getPath(), fileName, fileExtension);
                 newElement.loadInfos(newElement.getDirectory());
                 data.addElement(newElement);
             }
+            current ++;
+            parent.getProgressBar().setValue((int) (((float) current) / total * parent.getProgressBar().getMaximum()) + 1);
         }
 
     }
