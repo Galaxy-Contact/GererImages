@@ -32,6 +32,12 @@ public class BrowseController implements ActionListener {
 
 
         int clicked = fileChooser.showOpenDialog(null);
+
+        if (fileChooser.getSelectedFile() == null) {
+            loading.dispose();
+            return;
+        }
+
         if (clicked == fileChooser.getApproveButtonMnemonic()) {
             Path filePath = fileChooser.getSelectedFile().toPath();
             try {

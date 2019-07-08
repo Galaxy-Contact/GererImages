@@ -1,8 +1,11 @@
 package model;
 
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import javax.swing.*;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -16,7 +19,7 @@ public class ExcelHandler {
             "13_Mots_clés_PUBLIC", "14_Taille_MB_PUBLIC", "15_Width_PUBLIC", "16_Height_PUBLIC", "17_Depth_PUBLIC",
             "18_Dpi_PUBLIC", "19_Format_PUBLIC", "20_Orientation_PUBLIC", "21_Focal_Length_PUBLIC", "22_Aperture_PUBLIC",
             "23_Exposure_PUBLIC", "24_Sensitivity_PUBLIC", "25_Manufacturer_PUBLIC", "26_Model_PUBLIC",
-            "27_User_Comment_INTERNE", "28_Propriétaire_PUBLIC", "29_OPTION_1", "30_OPTION_2", "31_OPTION_3"};
+            "27_User_Comment_INTERNE", "28_Mode_Flash_PUBLIC", "29_Aperture_Maxi_PUBLIC", "30_Propriétaire_PUBLIC", "31_OPTION_3"};
 
 
     public void setOutputFile(File outputFile) {
@@ -24,33 +27,43 @@ public class ExcelHandler {
     }
 
     public void writeToFile(DefaultListModel<DataModel> data) throws IOException {
-        FileWriter fw = new FileWriter(outputFile);
-        for (int i = 1; i < champs.length; i ++) {
-            fw.write(champs[i] + ",");
+
+        Workbook workbook = new XSSFWorkbook();
+        FileOutputStream fos = new FileOutputStream(outputFile);
+
+        Sheet sheet = workbook.createSheet();
+
+        Row header = sheet.createRow(0);
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+
+        for (int i = 1; i < champs.length; i++) {
+            Cell headerCell = header.createCell(i - 1);
+            headerCell.setCellValue(champs[i]);
+            headerCell.setCellStyle(headerStyle);
         }
-        fw.write("\n");
 
         int length = data.size();
 
         HashMap<String, String> hash;
 
-        for (int i = 0; i < length; i ++) {
+        for (int i = 0; i < length; i++) {
             hash = data.get(i).getParsedData();
-            for (String champName : champs) {
-                if (!champName.equals("")) {
-                    String content = hash.get(champName);
-//                    System.out.println(content);
-                    if (!content.equals(","))
-                        content = "\"" + content + "\",";
-                    else
-                        content = content + ",";
-                    fw.write(content);
-                }
+            Row row = sheet.createRow(i + 1);
+            for (int j = 1; j < champs.length; j++) {
+                String content = hash.get(champs[j]);
+                Cell cell = row.createCell(j - 1);
+                cell.setCellValue(content);
+
             }
-            fw.write("\n");
         }
 
-        fw.flush();
-        fw.close();
+        for (int i = 0; i < champs.length;  i++)
+            sheet.autoSizeColumn(i);
+
+        workbook.write(fos);
+        workbook.close();
     }
 }

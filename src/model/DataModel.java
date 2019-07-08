@@ -5,9 +5,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifDirectoryBase;
-import com.drew.metadata.exif.ExifSubIFDDescriptor;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
@@ -30,7 +26,7 @@ public class DataModel {
             "13_Mots_clés_PUBLIC", "14_Taille_MB_PUBLIC", "15_Width_PUBLIC", "16_Height_PUBLIC", "17_Depth_PUBLIC",
             "18_Dpi_PUBLIC", "19_Format_PUBLIC", "20_Orientation_PUBLIC", "21_Focal_Length_PUBLIC", "22_Aperture_PUBLIC",
             "23_Exposure_PUBLIC", "24_Sensitivity_PUBLIC", "25_Manufacturer_PUBLIC", "26_Model_PUBLIC",
-            "27_User_Comment_INTERNE", "28_Propriétaire_PUBLIC", "29_OPTION_1", "30_OPTION_2", "31_OPTION_3"};
+            "27_User_Comment_INTERNE", "28_Mode_Flash_PUBLIC", "29_Aperture_Maxi_PUBLIC", "30_Propriétaire_PUBLIC", "31_OPTION_3"};
 
     private String[] deleteList = new String[]{"<strong>", "</strong>", "&quot;", "<b>", "</b>", "<br>", "<i>",};
 
@@ -49,7 +45,6 @@ public class DataModel {
     }
 
     private Metadata metadata;
-    private ExifSubIFDDirectory exifDirectory;
 
     public String getInfos() {
         return infos;
@@ -57,7 +52,6 @@ public class DataModel {
 
     public DataModel(int id, String directory, String fileName, String imageExtension) {
         this.fileName = fileName;
-        this.infos = infos;
         this.directory = directory;
         this.id = id;
         this.imageExtension = imageExtension;
@@ -68,6 +62,8 @@ public class DataModel {
         String line;
         String filePath = directoryToImage.replaceAll(imageExtension, "txt");
         File f = new File(filePath);
+        if (!f.isFile())
+            return;
         BufferedReader br = new BufferedReader(new FileReader(f));
         while ((line = br.readLine()) != null) {
             res.append("\n").append(line);
@@ -81,24 +77,19 @@ public class DataModel {
     }
 
     public void parseData() {
+        parsedData.put(champs[1], (id + 1) + "");
+        parsedData.put(champs[3], fileName + "." + imageExtension);
+        if (infos == null)
+            return;
         String[] splited = infos.split("\n");
-        for (int i = 1; i < champs.length; i++)
-            parsedData.put(champs[i], "");
         for (int i = 0; i < splited.length; i++)
             splited[i] = splited[i].trim();
-        parsedData.put(champs[1], (id + 1) + "");
-        parsedData.put(champs[4], getBigText(splited, "TITLE").replaceAll("\"", "\"\""));
-        parsedData.put(champs[5], getTakenDate(splited).replaceAll("\"", "\"\""));
-        parsedData.put(champs[9], getFL(splited).replaceAll("\"", "\"\""));
+        parsedData.put(champs[4], getBigText(splited, "TITLE"));
+        parsedData.put(champs[5], getTakenDate(splited));
+        parsedData.put(champs[9], getFL(splited));
         parsedData.put(champs[10], parsedData.get(champs[4]));
-        parsedData.put(champs[11], htmlStrip(getBigText(splited, "DESCRIPTION")).replaceAll("\"", "\"\""));
-        parsedData.put(champs[13], getTags(splited).replaceAll("\"", "\"\""));
-    }
-
-    private void debugParsed() {
-        for (int i = 1; i < champs.length; i++)
-            if (!parsedData.get(champs[i]).equals(""))
-                System.out.println(champs[i] + ": " + parsedData.get(champs[i]));
+        parsedData.put(champs[11], htmlStrip(getBigText(splited, "DESCRIPTION")));
+        parsedData.put(champs[13], getTags(splited));
     }
 
     private String getBigText(String[] splited, String group) {
@@ -199,40 +190,79 @@ public class DataModel {
         return s;
     }
 
-    public void loadMetaData() throws ImageProcessingException, IOException {
+    private void loadMetaData() throws ImageProcessingException, IOException {
         File image = new File(directory);
         metadata = ImageMetadataReader.readMetadata(image);
-        exifDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
     }
 
     private void loadExif() {
+
+        int numChannel = 0, bitDepth = 0;
+        String dateCreated = "";
+
         for (Directory directory : metadata.getDirectories()) {
+//            System.out.println();
             for (Tag tag : directory.getTags()) {
-                switch (tag.getTagType()) {
-                    case ExifSubIFDDirectory.TAG_X_RESOLUTION:
-                        if (parsedData.get(champs[18]).equals(""))
-                            parsedData.put(champs[18], tag.getDescription().split(" ")[0]);
+//                System.out.println(tag.getTagType() + " " + tag.getTagName() + "|" + tag.getDescription());
+                switch (tag.getTagName()) {
+                    case "File Modified Date":
+                        parsedData.put(champs[6], tag.getDescription());
                         break;
-                    case ExifSubIFDDirectory.TAG_FOCAL_LENGTH:
+                    case "Image Description":
+                        parsedData.putIfAbsent(champs[11], tag.getDescription());
+                        break;
+                    case "X Resolution":
+                        parsedData.putIfAbsent(champs[18], tag.getDescription().split(" ")[0]);
+                        break;
+                    case "Detected File Type Name":
+                        parsedData.put(champs[19], tag.getDescription());
+                        break;
+                    case "Focal Length":
                         parsedData.put(champs[21], tag.getDescription());
                         break;
-                    case ExifSubIFDDirectory.TAG_APERTURE:
+                    case "Aperture Value":
                         parsedData.put(champs[22], tag.getDescription());
                         break;
-                    case ExifSubIFDDirectory.TAG_EXPOSURE_TIME:
+                    case "Exposure Time":
                         parsedData.put(champs[23], tag.getDescription());
                         break;
-                    case ExifSubIFDDirectory.TAG_SENSITIVITY_TYPE:
-                        parsedData.put(champs[24], tag.getDescription());
+                    case "ISO Speed Ratings": {
+                        String[] ISO = tag.getDescription().split(" ");
+                        parsedData.put(champs[24], ISO[ISO.length - 1]);
+                    }
+                    break;
+                    case "Make":
+                        parsedData.put(champs[25], tag.getDescription());
                         break;
-                    case ExifSubIFDDirectory.TAG_MODEL:
+                    case "Model":
                         parsedData.put(champs[26], tag.getDescription());
+                        break;
+                    case "User Comment":
+                        parsedData.put(champs[27], tag.getDescription());
+                        break;
+                    case "Flash":
+                        parsedData.put(champs[28], tag.getDescription());
+                        break;
+                    case "Max Aperture Value":
+                        parsedData.put(champs[29], tag.getDescription());
+                        break;
+                    case "Date/Time Original":
+                        dateCreated = tag.getDescription();
+                        break;
+                    case "Number of Components":
+                        numChannel = Integer.parseInt(tag.getDescription().split(" ")[0]);
+                        break;
+                    case "Data Precision":
+                        bitDepth = Integer.parseInt(tag.getDescription().split(" ")[0]);
                         break;
                 }
             }
         }
-        for (String champ : champs)
-            parsedData.putIfAbsent(champ, "");
+        parsedData.putIfAbsent(champs[18], "300");
+        if (numChannel == 0)
+            parsedData.putIfAbsent(champs[17], "");
+        parsedData.putIfAbsent(champs[17], (numChannel * bitDepth) + "");
+        parsedData.putIfAbsent(champs[5], dateCreated);
 
     }
 
@@ -244,17 +274,26 @@ public class DataModel {
         df.setMaximumFractionDigits(2);
         try {
             brImage = ImageIO.read(imageFile);
-            parsedData.put(champs[14], df.format(imageFile.length() / 1024.0 / 1024.0));
+            parsedData.put(champs[14], df.format(imageFile.length() / 1000.0 / 1000.0));
             parsedData.put(champs[15], brImage.getWidth() + "");
             parsedData.put(champs[16], brImage.getHeight() + "");
 
+            if (brImage.getWidth() < brImage.getHeight())
+                parsedData.put(champs[20], "VERTICAL");
+            else if (brImage.getWidth() > brImage.getHeight())
+                parsedData.put(champs[20], "HORIZONTAL");
+            else
+                parsedData.put(champs[20], "QUADRATIC");
         } catch (IOException e) {
             System.out.println("Not found image at " + directory.replaceAll(".txt", imageExtension));
         }
 
         loadMetaData();
         loadExif();
+        parsedData.putIfAbsent(champs[19], imageExtension.toUpperCase());
 
+        for (String champ : champs)
+            parsedData.putIfAbsent(champ, "");
 //        debugParsed();
     }
 }

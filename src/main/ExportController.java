@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
 public class ExportController implements ActionListener {
@@ -25,26 +26,30 @@ public class ExportController implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        JFileChooser exportChooser = new JFileChooser(".");
-        exportChooser.setFileFilter(new FileNameExtensionFilter("CSV File", "csv"));
-        exportChooser.showSaveDialog(null);
-
-        if (exportChooser.getSelectedFile() == null)
-            return;
 
         LoadingWindow loading = new LoadingWindow("Saving to excel...", parent);
         loading.setVisible(true);
 
-        System.out.println(exportChooser.getSelectedFile());
+        JFileChooser exportChooser = new JFileChooser(".");
+        exportChooser.setFileFilter(new FileNameExtensionFilter("Excel File", "xlsx"));
+        exportChooser.setSelectedFile(new File("output.xlsx"));
+        int clicked = exportChooser.showSaveDialog(loading);
 
-        excel.setOutputFile(exportChooser.getSelectedFile());
+
+        if (clicked != exportChooser.getApproveButtonMnemonic()) {
+            loading.dispose();
+            return;
+        }
+
+        if (exportChooser.getSelectedFile().toString().endsWith("xlsx"))
+            excel.setOutputFile(exportChooser.getSelectedFile());
+        else
+            excel.setOutputFile(new File(exportChooser.getSelectedFile().toString() + ".xlsx"));
         for (int i = 0; i < data.size(); i ++) {
             data.get(i).parseData();
             try {
                 data.get(i).parseImage();
-            } catch (ImageProcessingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (ImageProcessingException | IOException e) {
                 e.printStackTrace();
             }
         }

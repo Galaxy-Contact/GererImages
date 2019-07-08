@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public class Thumbnail extends JPanel {
     private BufferedImage brImage;
-    private Image newImage;
 
     public void setImagePath(String imagePath) {
         try {
@@ -25,6 +24,7 @@ public class Thumbnail extends JPanel {
         super.paint(g);
         if (brImage != null) {
             int locx = 0, locy = 0;
+            Image newImage;
             if (this.getWidth() < this.getHeight()) {
                 newImage = brImage.getScaledInstance(this.getWidth(), -1, BufferedImage.SCALE_DEFAULT);
                 locy = (this.getWidth() - newImage.getWidth(this)) / 2;
