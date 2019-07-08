@@ -63,9 +63,9 @@ public class DataModel {
         StringBuilder res = new StringBuilder();
         String line;
         String filePath = directoryToImage.replace("." + imageExtension, ".txt");
-        System.out.println(filePath);
+//        System.out.println(filePath);
         File f = new File(filePath);
-        System.out.println(f.isFile());
+//        System.out.println(f.isFile());
         if (!f.isFile())
             return;
         BufferedReader br = new BufferedReader(new FileReader(f));
@@ -292,7 +292,7 @@ public class DataModel {
             else
                 parsedData.put(champs[20], "QUADRATIC");
         } catch (IOException e) {
-            System.out.println("Not found image at " + directory.replaceAll(".txt", imageExtension));
+
         }
 
         loadMetaData();

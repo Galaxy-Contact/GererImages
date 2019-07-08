@@ -80,6 +80,7 @@ public class MainGUI extends JFrame {
         pnlInfos.add(lblInfos, BorderLayout.NORTH);
         pnlInfos.add(pnlInfoCenter, BorderLayout.CENTER);
         pnlInfoCenter.add(infoScroller);
+        progressBar.setStringPainted(true);
         pnlInfoCenter.add(progressBar, BorderLayout.SOUTH);
 
 

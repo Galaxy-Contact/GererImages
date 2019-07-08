@@ -64,6 +64,7 @@ public class ExcelHandler {
                 cell.setCellValue((content != null) ? content : "");
             }
             parent.getProgressBar().setValue((int) (((float) i) / length * parent.getProgressBar().getMaximum()));
+            parent.getProgressBar().setString((i + 1) + " of " + length);
         }
 
         for (int i = 0; i < champs.length;  i++)

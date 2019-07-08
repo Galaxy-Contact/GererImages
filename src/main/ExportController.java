@@ -1,7 +1,6 @@
 package main;
 
 import com.drew.imaging.ImageProcessingException;
-import gui.LoadingWindow;
 import gui.MainGUI;
 import model.DataModel;
 import model.ExcelHandler;
@@ -44,14 +43,18 @@ public class ExportController implements ActionListener {
                 excel.setOutputFile(exportChooser.getSelectedFile());
             else
                 excel.setOutputFile(new File(exportChooser.getSelectedFile().toString() + ".xlsx"));
-            for (int i = 0; i < data.size(); i ++) {
+
+            int length = data.size();
+
+            for (int i = 0; i < length; i ++) {
                 data.get(i).parseData();
                 try {
                     data.get(i).parseImage();
                 } catch (ImageProcessingException | IOException e) {
                     e.printStackTrace();
                 }
-                parent.getProgressBar().setValue((int) (((float) i) / data.size() * parent.getProgressBar().getMaximum() / 2));
+                parent.getProgressBar().setValue((int) (((float) i) / length * parent.getProgressBar().getMaximum() / 2));
+                parent.getProgressBar().setString((i + 1) + " of " + length);
             }
 
             try {

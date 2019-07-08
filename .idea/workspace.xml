@@ -7,12 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30841439-b7ee-44fb-81dc-12c7d6a875a1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/LoadingWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/LoadingWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/gui/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/MainGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/BrowseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BrowseController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/ExportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ExportController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ListListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ListListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/DataModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/DataModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/ExcelHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/ExcelHandler.java" afterDir="false" />
     </list>
@@ -31,10 +28,18 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/DataModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="313">
-              <caret line="299" column="73" selection-start-line="299" selection-start-column="73" selection-end-line="299" selection-end-column="73" />
+            <state relative-caret-position="94">
+              <caret line="186" column="13" selection-start-line="186" selection-start-column="10" selection-end-line="186" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1760#1761#0" expanded="true" />
+                <element signature="e#1793#1794#0" expanded="true" />
+                <element signature="e#1829#1830#0" expanded="true" />
+                <element signature="e#1861#1862#0" expanded="true" />
+                <element signature="e#1896#1897#0" expanded="true" />
+                <element signature="e#1927#1928#0" expanded="true" />
+                <element signature="e#1991#1992#0" expanded="true" />
+                <element signature="e#2019#2020#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -43,8 +48,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/gui/MainGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-209">
-              <caret line="74" column="35" selection-start-line="74" selection-start-column="35" selection-end-line="74" selection-end-column="35" />
+            <state relative-caret-position="94">
+              <caret line="83" column="33" selection-start-line="83" selection-start-column="33" selection-end-line="83" selection-end-column="33" />
               <folding>
                 <element signature="e#1093#1094#0" expanded="true" />
                 <element signature="e#1127#1128#0" expanded="true" />
@@ -58,8 +63,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/ListListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="23" column="48" selection-start-line="23" selection-start-column="48" selection-end-line="23" selection-end-column="48" />
+            <state relative-caret-position="68">
+              <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/BrowseController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="12" column="16" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -68,19 +82,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/BrowseController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="564">
-              <caret line="68" column="20" selection-start-line="68" selection-start-column="20" selection-end-line="68" selection-end-column="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/model/ExcelHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="125">
-              <caret line="65" column="112" selection-start-line="65" selection-start-column="112" selection-end-line="65" selection-end-column="112" />
+            <state relative-caret-position="94">
+              <caret line="66" column="29" selection-start-line="66" selection-start-column="28" selection-end-line="66" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1344#1345#0" expanded="true" />
@@ -95,8 +100,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/ExportController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="53" column="50" selection-start-line="53" selection-start-column="50" selection-end-line="53" selection-end-column="50" />
+            <state relative-caret-position="102">
+              <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
             </state>
           </provider>
         </entry>
@@ -158,13 +163,18 @@
       <find>parseDa</find>
       <find>parseData</find>
       <find>Sys</find>
-      <find>system</find>
       <find>Syste</find>
       <find>sysm</find>
       <find>getPro</find>
       <find>pnlbu</find>
       <find>loadmeta</find>
       <find>pnl</find>
+      <find>length()</find>
+      <find>.size</find>
+      <find>size()</find>
+      <find>syste</find>
+      <find>system</find>
+      <find>sys</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -178,13 +188,13 @@
         <option value="$PROJECT_DIR$/src/main/Main.java" />
         <option value="$PROJECT_DIR$/src/model/XSSFWorkbook.java" />
         <option value="$PROJECT_DIR$/src/gui/Thumbnail.java" />
-        <option value="$PROJECT_DIR$/src/main/BrowseController.java" />
         <option value="$PROJECT_DIR$/src/main/ListListener.java" />
+        <option value="$PROJECT_DIR$/src/gui/LoadingWindow.java" />
         <option value="$PROJECT_DIR$/src/gui/MainGUI.java" />
+        <option value="$PROJECT_DIR$/src/model/ExcelHandler.java" />
         <option value="$PROJECT_DIR$/src/model/DataModel.java" />
         <option value="$PROJECT_DIR$/src/main/ExportController.java" />
-        <option value="$PROJECT_DIR$/src/gui/LoadingWindow.java" />
-        <option value="$PROJECT_DIR$/src/model/ExcelHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/BrowseController.java" />
       </list>
     </option>
   </component>
@@ -306,7 +316,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="64276000" />
+    <option name="totallyTimeSpent" value="64953000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -320,8 +330,8 @@
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3289256" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.41080198" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32733223" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.41080198" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -359,20 +369,6 @@
     <entry file="jar://E:/eclipse-workspace/JarLibs/material-ui-swing.jar!/mdlaf/MaterialLookAndFeel.class" />
     <entry file="jrt:///usr/lib/jvm/java-10-openjdk!/java.base/java/io/PrintStream.class" />
     <entry file="file://$PROJECT_DIR$/src/model/XSSFWorkbook.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/BrowseController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="564">
-          <caret line="68" column="20" selection-start-line="68" selection-start-column="20" selection-end-line="68" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ExportController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="53" column="50" selection-start-line="53" selection-start-column="50" selection-end-line="53" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/gui/LoadingWindow.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -400,30 +396,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/DataModel.java">
+    <entry file="file://$PROJECT_DIR$/src/model/ExcelHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="299" column="73" selection-start-line="299" selection-start-column="73" selection-end-line="299" selection-end-column="73" />
+        <state relative-caret-position="94">
+          <caret line="66" column="29" selection-start-line="66" selection-start-column="28" selection-end-line="66" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1344#1345#0" expanded="true" />
+            <element signature="e#1380#1381#0" expanded="true" />
+            <element signature="e#1430#1431#0" expanded="true" />
+            <element signature="e#1474#1475#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/ListListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="23" column="48" selection-start-line="23" selection-start-column="48" selection-end-line="23" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="68">
+          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gui/MainGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-209">
-          <caret line="74" column="35" selection-start-line="74" selection-start-column="35" selection-end-line="74" selection-end-column="35" />
+        <state relative-caret-position="94">
+          <caret line="83" column="33" selection-start-line="83" selection-start-column="33" selection-end-line="83" selection-end-column="33" />
           <folding>
             <element signature="e#1093#1094#0" expanded="true" />
             <element signature="e#1127#1128#0" expanded="true" />
@@ -433,16 +430,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/ExcelHandler.java">
+    <entry file="file://$PROJECT_DIR$/src/model/DataModel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="65" column="112" selection-start-line="65" selection-start-column="112" selection-end-line="65" selection-end-column="112" />
+        <state relative-caret-position="94">
+          <caret line="186" column="13" selection-start-line="186" selection-start-column="10" selection-end-line="186" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1344#1345#0" expanded="true" />
-            <element signature="e#1380#1381#0" expanded="true" />
-            <element signature="e#1430#1431#0" expanded="true" />
-            <element signature="e#1474#1475#0" expanded="true" />
+            <element signature="e#1760#1761#0" expanded="true" />
+            <element signature="e#1793#1794#0" expanded="true" />
+            <element signature="e#1829#1830#0" expanded="true" />
+            <element signature="e#1861#1862#0" expanded="true" />
+            <element signature="e#1896#1897#0" expanded="true" />
+            <element signature="e#1927#1928#0" expanded="true" />
+            <element signature="e#1991#1992#0" expanded="true" />
+            <element signature="e#2019#2020#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ExportController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/BrowseController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="16" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

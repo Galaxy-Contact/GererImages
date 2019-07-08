@@ -1,6 +1,5 @@
 package main;
 
-import gui.LoadingWindow;
 import gui.MainGUI;
 import model.DataModel;
 
@@ -9,10 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
-
-import static java.nio.file.Files.newDirectoryStream;
 
 public class BrowseController implements ActionListener {
 
@@ -72,6 +68,7 @@ public class BrowseController implements ActionListener {
             }
             current ++;
             parent.getProgressBar().setValue((int) (((float) current) / total * parent.getProgressBar().getMaximum()) + 1);
+            parent.getProgressBar().setString(current + " of " + total);
         }
 
     }
