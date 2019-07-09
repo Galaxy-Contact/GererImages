@@ -97,7 +97,7 @@ public class MainGUI extends JFrame {
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (renderer instanceof JLabel && value instanceof DataModel) {
-                    ((JLabel) renderer).setText(((DataModel) value).getFileName());
+                    ((JLabel) renderer).setText((((DataModel) value).getID() + 1) + ". " + ((DataModel) value).getFileName());
                 }
                 return renderer;
             }

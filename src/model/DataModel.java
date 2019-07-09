@@ -4,31 +4,38 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.file.FileSystemDirectory;
+import com.drew.metadata.file.FileTypeDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
+import com.drew.metadata.jpeg.JpegDirectory;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public class DataModel {
 
 
-    private File imageFile;
     private String fileName, imageExtension, infos, directory;
+
+    public int getID() {
+        return id;
+    }
+
     private int id;
     private String[] champs = new String[]{"", "1_Index_INTERNE", "2_Mission_PUBLIC", "3_Référence_Nasa_avec_Titre_INTERNE",
-            "4_Référence_Nasa_INTERNE", "5_Date_de_prise_de_vue_/_Traitement_de_l’image_PUBLIC",
-            "6_Date_de_traitement_de_l’image_PUBLIC", "7_Référence_Galaxy_PUBLIC", "8_Référence_Nasa_ou_FL/Galaxy_INTERNE",
-            "9_Référence_FL_INTERNE", "10_Titre_PUBLIC", "11_Description_PUBLIC", "12_Wikipedia_Infos_about_...._PUBLIC",
-            "13_Mots_clés_PUBLIC", "14_Taille_MB_PUBLIC", "15_Width_PUBLIC", "16_Height_PUBLIC", "17_Depth_PUBLIC",
-            "18_Dpi_PUBLIC", "19_Format_PUBLIC", "20_Orientation_PUBLIC", "21_Focal_Length_PUBLIC", "22_Aperture_PUBLIC",
-            "23_Exposure_PUBLIC", "24_Sensitivity_PUBLIC", "25_Manufacturer_PUBLIC", "26_Model_PUBLIC",
-            "27_User_Comment_INTERNE", "28_Mode_Flash_PUBLIC", "29_Aperture_Maxi_PUBLIC", "30_Propriétaire_PUBLIC", "31_OPTION_3"};
+            "4_Référence_Nasa_INTERNE", "5_Titre_PUBLIC", "6_Date_de_prise_de_vue_/_Traitement_de_l’image_PUBLIC",
+            "7_Date_de_traitement_de_l’image_PUBLIC", "8_Description_PUBLIC",
+            "9_Référence_Galaxy_PUBLIC", "10_Référence_Nasa_ou_FL/Galaxy_INTERNE", "11_Référence_FL_INTERNE", "12_Credit_PUBLIC",
+            "13_Wikipedia_Infos_about_...._PUBLIC", "14_Mots_clés_PUBLIC", "15_Taille_MB_PUBLIC", "16_Width_PUBLIC", "17_Height_PUBLIC",
+            "18_Depth_PUBLIC", "19_Dpi_PUBLIC", "20_Format_PUBLIC", "21_Orientation_PUBLIC", "22_Focal_Length_PUBLIC",
+            "23_Aperture_PUBLIC", "24_Aperture maxi_PUBLIC", "25_Exposure_PUBLIC", "26_Sensitivity_PUBLIC",
+            "27_Mode Flash_PUBLIC", "28_Manufacturer_PUBLIC", "29_Model_PUBLIC", "30_User_Comment_INTERNE", "31_Propriétaire_PUBLIC"};
 
     private String[] deleteList = new String[]{"<strong>", "</strong>", "&quot;", "<b>", "</b>", "<br>", "<i>",};
 
@@ -63,9 +70,7 @@ public class DataModel {
         StringBuilder res = new StringBuilder();
         String line;
         String filePath = directoryToImage.replace("." + imageExtension, ".txt");
-//        System.out.println(filePath);
         File f = new File(filePath);
-//        System.out.println(f.isFile());
         if (!f.isFile())
             return;
         BufferedReader br = new BufferedReader(new FileReader(f));
@@ -73,22 +78,29 @@ public class DataModel {
             res.append("\n").append(line);
         }
         infos = res.toString();
-//        System.out.println(infos + "\n");
     }
 
     public void parseData() {
-        parsedData.put(champs[1], (id + 1) + "");
+        parsedData.putIfAbsent(champs[1], (id + 1) + "");
         if (infos == null)
             return;
         String[] splited = infos.split("\n");
         for (int i = 0; i < splited.length; i++)
             splited[i] = splited[i].trim();
-        parsedData.put(champs[4], getBigText(splited, "TITLE"));
-        parsedData.put(champs[5], getTakenDate(splited));
-        parsedData.put(champs[9], getFL(splited));
-        parsedData.put(champs[10], parsedData.get(champs[4]));
-        parsedData.put(champs[11], htmlStrip(getBigText(splited, "DESCRIPTION")));
-        parsedData.put(champs[13], getTags(splited));
+        parsedData.putIfAbsent(champs[5], htmlStrip(getBigText(splited, "TITLE")));
+        parsedData.putIfAbsent(champs[6], getTakenDate(splited));
+        parsedData.putIfAbsent(champs[8], htmlStrip(getBigText(splited, "DESCRIPTION")));
+        parsedData.putIfAbsent(champs[12], htmlStrip(getCredit(splited)));
+        parsedData.putIfAbsent(champs[11], getFL(splited));
+        parsedData.putIfAbsent(champs[14], getTags(splited));
+    }
+
+    private String getCredit(String[] splited) {
+        for (String s : splited) {
+            if (s.contains("*Credit:*"))
+                return s.substring(s.indexOf("*Credit:*") + 9).trim();
+        }
+        return null;
     }
 
     private String getBigText(String[] splited, String group) {
@@ -114,7 +126,7 @@ public class DataModel {
             if (s.startsWith("Taken Date"))
                 return s.substring(s.indexOf(":") + 1).trim();
         }
-        return "";
+        return null;
     }
 
     private String getFL(String[] splited) {
@@ -124,7 +136,7 @@ public class DataModel {
                 return temp[temp.length - 1];
             }
         }
-        return "";
+        return null;
     }
 
     private String getTags(String[] splited) {
@@ -143,6 +155,8 @@ public class DataModel {
     }
 
     private String delete(String s, String target) {
+        if (s == null)
+            return null;
         int pos = s.indexOf(target);
         while (pos >= 0) {
             s = s.substring(0, pos) + s.substring(pos + target.length());
@@ -152,6 +166,8 @@ public class DataModel {
     }
 
     private String deleteHashtag(String s) {
+        if (s == null)
+            return null;
         int pos = s.indexOf("#");
         while (pos >= 0) {
             int posEnd = pos + 1;
@@ -164,6 +180,8 @@ public class DataModel {
     }
 
     private String deleteSentence(String s, String targetBegin, String targetEnd) {
+        if (s == null)
+            return null;
         int posBegin = s.indexOf(targetBegin);
         while (posBegin >= 0) {
             int posEnd = s.indexOf(targetEnd, posBegin + 1);
@@ -176,7 +194,6 @@ public class DataModel {
     }
 
     private String htmlStrip(String s) {
-//        System.out.println("Striping: " + s);
 
         s = deleteHashtag(s);
         s = deleteSentence(s, "<a", "a>");
@@ -190,114 +207,89 @@ public class DataModel {
     }
 
     private void loadMetaData() throws ImageProcessingException, IOException {
+        File imageFile = new File(directory);
         metadata = ImageMetadataReader.readMetadata(imageFile);
     }
 
-    private void loadExif() {
 
-        int numChannel = 0, bitDepth = 0;
-        String dateCreated = "";
+    private void loadExif() throws MetadataException {
+        Directory jpegDirectory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
+        Directory fileDirectory = metadata.getFirstDirectoryOfType(FileSystemDirectory.class);
+        Directory fileTypeDirectory = metadata.getFirstDirectoryOfType(FileTypeDirectory.class);
+        Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        Directory exifSubIFDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+        Directory iptcDirectory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
 
-        for (Directory directory : metadata.getDirectories()) {
-            for (Tag tag : directory.getTags()) {
-                switch (tag.getTagName().trim()) {
-                    case "File Modified Date":
-                        parsedData.put(champs[6], tag.getDescription());
-                        break;
-                    case "Image Description":
-                        parsedData.putIfAbsent(champs[11], tag.getDescription());
-                        break;
-                    case "Detected File Type Name":
-                        parsedData.put(champs[19], tag.getDescription());
-                        break;
-                    case "Focal Length":
-                        parsedData.put(champs[21], tag.getDescription());
-                        break;
-                    case "Aperture Value":
-                        parsedData.put(champs[22], tag.getDescription());
-                        break;
-                    case "Exposure Time":
-                        parsedData.put(champs[23], tag.getDescription());
-                        break;
-                    case "ISO Speed Ratings": {
-                        String[] ISO = tag.getDescription().split(" ");
-                        parsedData.put(champs[24], ISO[ISO.length - 1]);
-                    }
-                    break;
-                    case "Make":
-                        parsedData.put(champs[25], tag.getDescription());
-                        break;
-                    case "Model":
-                        parsedData.put(champs[26], tag.getDescription());
-                        break;
-                    case "User Comment":
-                        parsedData.put(champs[27], tag.getDescription());
-                        break;
-                    case "Flash":
-                        parsedData.put(champs[28], tag.getDescription());
-                        break;
-                    case "Max Aperture Value":
-                        parsedData.put(champs[29], tag.getDescription());
-                        break;
-                    case "Date/Time Original":
-                    case "Date/Time":
-                        parsedData.put(champs[5], tag.getDescription());
-                        break;
-                    case "Number of Components":
-                        numChannel = Integer.parseInt(tag.getDescription().split(" ")[0]);
-                        break;
-                    case "Data Precision":
-                        bitDepth = Integer.parseInt(tag.getDescription().split(" ")[0]);
-                        break;
-                    case "Keywords":
-                        parsedData.putIfAbsent(champs[13], tag.getDescription());
-                        break;
-                    case "Resolution Info": {
-                        if (parsedData.get(champs[18]) != null) {
-                            int currentDPI = Integer.parseInt(parsedData.get(champs[18]));
-                            int newDPI = Integer.parseInt(tag.getDescription().split("x")[0]);
-                            parsedData.put(champs[18], Math.max(currentDPI, newDPI) + "");
-                        } else
-                            parsedData.put(champs[18], tag.getDescription().split("x")[0]);
-                    }
-                    break;
+        int numChannel = jpegDirectory.getInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS);
+        int bitDepth = jpegDirectory.getInt(JpegDirectory.TAG_DATA_PRECISION);
 
-                }
-            }
+        if (exifSubIFDirectory != null) {
+            System.out.println(fileName + " " + exifSubIFDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+            parsedData.putIfAbsent(champs[6], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+            parsedData.putIfAbsent(champs[22], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_FOCAL_LENGTH));
+            parsedData.putIfAbsent(champs[23], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_APERTURE));
+            parsedData.putIfAbsent(champs[24], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_MAX_APERTURE));
+            parsedData.putIfAbsent(champs[25], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
+            if (exifSubIFDirectory.containsTag(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT))
+                parsedData.putIfAbsent(champs[26], exifSubIFDirectory.getInt(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT) + "");
+            parsedData.putIfAbsent(champs[27], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_FLASH));
+            parsedData.putIfAbsent(champs[30], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+
         }
-        parsedData.putIfAbsent(champs[18], "300");
-        if (numChannel == 0)
-            parsedData.putIfAbsent(champs[17], "");
-        parsedData.putIfAbsent(champs[17], (numChannel * bitDepth) + "");
-        parsedData.putIfAbsent(champs[5], dateCreated);
+
+        if (fileDirectory != null) {
+            String fileName = fileDirectory.getDescription(FileSystemDirectory.TAG_FILE_NAME);
+            String[] fileNameSeparated = fileName.substring(0, fileName.indexOf("." + imageExtension)).split("_");
+            parsedData.putIfAbsent(champs[3], fileName);
+            if (fileNameSeparated.length == 3) {
+                parsedData.putIfAbsent(champs[4], fileNameSeparated[0]);
+                parsedData.putIfAbsent(champs[5], fileNameSeparated[1]);
+                parsedData.putIfAbsent(champs[6], fileNameSeparated[2]);
+            } else if (fileNameSeparated.length == 2) {
+                parsedData.putIfAbsent(champs[4], fileNameSeparated[0]);
+                parsedData.putIfAbsent(champs[6], fileNameSeparated[1]);
+            }
+
+
+            parsedData.putIfAbsent(champs[7], fileDirectory.getDescription(FileSystemDirectory.TAG_FILE_MODIFIED_DATE));
+            parsedData.putIfAbsent(champs[15], String.valueOf(fileDirectory.getFloat(FileSystemDirectory.TAG_FILE_SIZE) / 1024 / 1024));
+        }
+
+        if (exifIFD0Directory != null) {
+            parsedData.putIfAbsent(champs[8], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_IMAGE_DESCRIPTION));
+            parsedData.putIfAbsent(champs[19], String.valueOf(exifIFD0Directory.getInt(ExifIFD0Directory.TAG_X_RESOLUTION)));
+            parsedData.putIfAbsent(champs[20], fileTypeDirectory.getDescription(ExifIFD0Directory.TAG_INTEROP_INDEX));
+            parsedData.putIfAbsent(champs[28], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_MAKE));
+            parsedData.putIfAbsent(champs[29], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_MODEL));
+            parsedData.putIfAbsent(champs[12], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_ARTIST));
+
+        }
+
+        parsedData.putIfAbsent(champs[16], String.valueOf(jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_WIDTH)));
+        parsedData.putIfAbsent(champs[17], String.valueOf(jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_HEIGHT)));
+
+        if (jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_WIDTH) > jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_HEIGHT))
+            parsedData.putIfAbsent(champs[21], "horizontal");
+        else if (jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_WIDTH) < jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_HEIGHT))
+            parsedData.putIfAbsent(champs[21], "vertical");
+        else
+            parsedData.putIfAbsent(champs[21], "quadratic");
+
+        if (iptcDirectory != null)
+            parsedData.putIfAbsent(champs[14], iptcDirectory.getDescription(IptcDirectory.TAG_KEYWORDS));
+
+        parsedData.putIfAbsent(champs[18], (numChannel * bitDepth) + "");
 
     }
 
 
     public void parseImage() throws ImageProcessingException, IOException {
-        imageFile = new File(directory);
-        BufferedImage brImage;
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(2);
-        try {
-            brImage = ImageIO.read(imageFile);
-            parsedData.put(champs[14], df.format(imageFile.length() / 1024.0 / 1024.0));
-            parsedData.put(champs[15], brImage.getWidth() + "");
-            parsedData.put(champs[16], brImage.getHeight() + "");
-
-            if (brImage.getWidth() < brImage.getHeight())
-                parsedData.put(champs[20], "VERTICAL");
-            else if (brImage.getWidth() > brImage.getHeight())
-                parsedData.put(champs[20], "HORIZONTAL");
-            else
-                parsedData.put(champs[20], "QUADRATIC");
-        } catch (IOException e) {
-
-        }
-
         loadMetaData();
-        loadExif();
+        try {
+            loadExif();
+        } catch (MetadataException e) {
+            e.printStackTrace();
+        }
         parsedData.putIfAbsent(champs[19], imageExtension.toUpperCase());
-//        debugParsed();
     }
 }

@@ -60,7 +60,7 @@ public class ExportController implements ActionListener {
             try {
                 excel.writeToFile(data);
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(parent, "ERROR " + e.getMessage());
+                e.printStackTrace();
             }
         }).start();
     }

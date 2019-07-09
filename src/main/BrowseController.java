@@ -25,8 +25,6 @@ public class BrowseController implements ActionListener {
         JFileChooser fileChooser = new JFileChooser(".");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-//        LoadingWindow loading = new LoadingWindow("Loading images...", parent);
-//        loading.setVisible(true);
 
 
         int clicked = fileChooser.showOpenDialog(null);
