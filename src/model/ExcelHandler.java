@@ -63,7 +63,7 @@ public class ExcelHandler {
                 Cell cell = row.createCell(j - 1);
                 cell.setCellValue((content != null) ? content : "");
             }
-            parent.getProgressBar().setValue((int) (((float) i) / length * parent.getProgressBar().getMaximum()));
+            parent.getProgressBar().setValue((int) (((float) i) / length * parent.getProgressBar().getMaximum() / 2) + parent.getProgressBar().getValue() + 1);
             parent.getProgressBar().setString((i + 1) + " of " + length);
         }
 
