@@ -114,7 +114,7 @@ public class ExportController implements ActionListener {
             if ((titre != null) && (ref != null)) {
                 titre = titre.toLowerCase();
                 if (titre.contains(ref.toLowerCase())) {
-                    dm.put(champs[5], titre.replaceAll(ref, ""));
+                    dm.put(champs[5], titre.replaceAll(ref.toLowerCase(), ""));
                 }
             }
 

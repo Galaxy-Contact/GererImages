@@ -315,9 +315,12 @@ public class DataModel {
                 title = fileNameSeparated[1];
 
             parsedData.putIfAbsent(champs[3], fileName);
-            parsedData.putIfAbsent(champs[4], reference);
-            parsedData.putIfAbsent(champs[5], title);
-            parsedData.putIfAbsent(champs[6], date);
+            if (reference != null)
+                parsedData.put(champs[4], reference);
+            if (title != null)
+                parsedData.put(champs[5], title);
+            if (date != null)
+                parsedData.put(champs[6], date);
 
 
             DecimalFormat df = new DecimalFormat();
