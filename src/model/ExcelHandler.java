@@ -1,8 +1,8 @@
 package model;
 
 import gui.MainGUI;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.swing.*;
 import java.io.File;
@@ -32,14 +32,13 @@ public class ExcelHandler {
         this.outputFile = outputFile;
     }
 
-    public void writeToFile(DefaultListModel<DataModel> data) throws IOException {
-
-        Workbook workbook = new XSSFWorkbook();
-        FileOutputStream fos = null;
+    public void writeToFileExcel(DefaultListModel<DataModel> data) throws IOException {
+        Workbook workbook = new HSSFWorkbook();
+        FileOutputStream fos;
         try {
             fos = new FileOutputStream(outputFile);
         } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(parent, "Can't open file", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, "Can't open file\nTry to close the output file before exporting", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -84,4 +83,53 @@ public class ExcelHandler {
         fos.close();
         parent.getProgressBar().setString("Finished");
     }
+
+//    public void writeToFile(DefaultListModel<DataModel> data) throws IOException {
+//
+//
+//        FileOutputStream fos;
+//        OutputStreamWriter osw;
+//        try {
+//            fos = new FileOutputStream(outputFile);
+//            osw = new OutputStreamWriter(fos,
+//                    StandardCharsets.UTF_8);
+//            fos.write(0xef);
+//            fos.write(0xbb);
+//            fos.write(0xbf);
+//        } catch (FileNotFoundException e) {
+//            JOptionPane.showMessageDialog(parent, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+//
+//        CSVWriter csvWriter = new CSVWriter(osw);
+//
+//        String[] line = new String[champs.length - 1];
+//
+//        System.arraycopy(champs, 1, line, 0, champs.length - 1);
+//
+//        csvWriter.writeNext(line, true);
+//
+//        int length = data.size();
+//
+//        HashMap<String, String> hash;
+//
+//        for (int i = 0; i < length; i++) {
+//            hash = data.get(i).getParsedData();
+//            for (int j = 1; j < champs.length; j++) {
+//                String content = hash.get(champs[j]);
+//                if ((content == null) || (content.equals("null")))
+//                    content = "";
+//                line[j - 1] = content;
+//            }
+//            csvWriter.writeNext(line, true);
+//            parent.getProgressBar().setValue((int) (((float) i) / length * parent.getProgressBar().getMaximum() / 2) + parent.getProgressBar().getValue() + 1);
+//            parent.getProgressBar().setString("Parsed " + (i + 1) + " of " + length);
+//        }
+//        parent.getProgressBar().setString("Saving file...");
+//
+//        csvWriter.close();
+//
+//        parent.getProgressBar().setString("Finished");
+//
+//    }
 }

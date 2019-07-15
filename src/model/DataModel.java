@@ -5,17 +5,26 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
+import com.drew.metadata.Tag;
+import com.drew.metadata.bmp.BmpHeaderDirectory;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.file.FileSystemDirectory;
 import com.drew.metadata.file.FileTypeDirectory;
+import com.drew.metadata.gif.GifHeaderDirectory;
+import com.drew.metadata.gif.GifImageDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.jpeg.JpegDirectory;
+import com.drew.metadata.png.PngDirectory;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public class DataModel {
@@ -36,8 +45,9 @@ public class DataModel {
             "18_Depth_PUBLIC", "19_Dpi_PUBLIC", "20_Format_PUBLIC", "21_Orientation_PUBLIC", "22_Focal_Length_PUBLIC",
             "23_Aperture_PUBLIC", "24_Aperture maxi_PUBLIC", "25_Exposure_PUBLIC", "26_Sensitivity_PUBLIC",
             "27_Mode Flash_PUBLIC", "28_Manufacturer_PUBLIC", "29_Model_PUBLIC", "30_User_Comment_INTERNE", "31_Propriétaire_PUBLIC"};
+//    private String[] months = new String[] {"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"};
 
-    private String[] deleteList = new String[]{"<strong>", "</strong>", "&quot;", "<b>", "</b>", "<br>", "<i>",};
+    private String[] deleteList = new String[]{"<strong>", "</strong>", "&quot;", "<b>", "</b>", "<br>", "<i>"};
 
     private HashMap<String, String> parsedData = new HashMap<>();
 
@@ -118,6 +128,8 @@ public class DataModel {
                 break;
             }
         }
+        if (res.toString().equals(""))
+            return null;
         return res.toString();
     }
 
@@ -140,13 +152,21 @@ public class DataModel {
     }
 
     private String getTags(String[] splited) {
-        StringBuilder tags = new StringBuilder(getBigText(splited, "TAGS"));
+        String text = getBigText(splited, "TAGS");
+        if (text == null)
+            return null;
+        text = text.trim();
+        if (text.equals("") || text.equals("(no tags)"))
+            return null;
+        StringBuilder tags = new StringBuilder(text);
+
         String[] tagsList = tags.toString().split("\"");
+//        System.out.println(text + " tag " + tagsList.length);
         tags = new StringBuilder();
         for (String t : tagsList) {
             t = t.trim();
             if (!t.equals(""))
-                tags.append(t).append(", ");
+                tags.append(t).append(";");
         }
         if (tags.charAt(tags.length() - 1) == '\"')
             return tags.substring(0, tags.length() - 3);
@@ -194,7 +214,8 @@ public class DataModel {
     }
 
     private String htmlStrip(String s) {
-
+        if (s == null)
+            return null;
         s = deleteHashtag(s);
         s = deleteSentence(s, "<a", "a>");
 
@@ -207,8 +228,25 @@ public class DataModel {
     }
 
     private void loadMetaData() throws ImageProcessingException, IOException {
+//        System.out.println(directory);
         File imageFile = new File(directory);
         metadata = ImageMetadataReader.readMetadata(imageFile);
+    }
+
+    private String getDes(Directory directory, int tag) {
+        if (directory.containsTag(tag))
+            return directory.getDescription(tag);
+        else return null;
+    }
+    private int getInt(Directory directory, int tag) {
+        if (directory.containsTag(tag)) {
+            try {
+                return directory.getInt(tag);
+            } catch (MetadataException e) {
+                return 0;
+            }
+        }
+        return 0;
     }
 
 
@@ -219,66 +257,150 @@ public class DataModel {
         Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
         Directory exifSubIFDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
         Directory iptcDirectory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+        Directory pngDirectory = metadata.getFirstDirectoryOfType(PngDirectory.class);
+        Directory gifHeaderDirectory = metadata.getFirstDirectoryOfType(GifHeaderDirectory.class);
+        Directory bmpHeaderDirectory = metadata.getFirstDirectoryOfType(BmpHeaderDirectory.class);
 
-        int numChannel = jpegDirectory.getInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS);
-        int bitDepth = jpegDirectory.getInt(JpegDirectory.TAG_DATA_PRECISION);
+
+
+        int numChannel = 3, bitDepth = 0;
+
+//        for (Directory d : metadata.getDirectories()) {
+//            System.out.println("============ Directory " + d.getName() + " ==============");
+//            for (Tag t : d.getTags()) {
+//                System.out.println(t.getTagType() + "|" + t.getTagName() + "|" + t.getDescription());
+//            }
+//        }
+
+        int width = 0;
+        int height = 0;
+        if (jpegDirectory != null) {
+            numChannel = Math.max(numChannel, getInt(jpegDirectory, JpegDirectory.TAG_NUMBER_OF_COMPONENTS));
+            bitDepth = Math.max(bitDepth, getInt(jpegDirectory, JpegDirectory.TAG_DATA_PRECISION));
+            width = getInt(jpegDirectory, JpegDirectory.TAG_IMAGE_WIDTH);
+            height = getInt(jpegDirectory, JpegDirectory.TAG_IMAGE_HEIGHT);
+        }
+
+        int iso = 0;
 
         if (exifSubIFDirectory != null) {
-            System.out.println(fileName + " " + exifSubIFDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
-            parsedData.putIfAbsent(champs[6], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
-            parsedData.putIfAbsent(champs[22], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_FOCAL_LENGTH));
-            parsedData.putIfAbsent(champs[23], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_APERTURE));
-            parsedData.putIfAbsent(champs[24], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_MAX_APERTURE));
-            parsedData.putIfAbsent(champs[25], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
-            if (exifSubIFDirectory.containsTag(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT))
-                parsedData.putIfAbsent(champs[26], exifSubIFDirectory.getInt(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT) + "");
-            parsedData.putIfAbsent(champs[27], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_FLASH));
-            parsedData.putIfAbsent(champs[30], exifSubIFDirectory.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+            if (width == 0) {
+                width = getInt(exifSubIFDirectory, ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
+                height = getInt(exifSubIFDirectory, ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
+            }
+            parsedData.putIfAbsent(champs[6], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+            parsedData.putIfAbsent(champs[22], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FOCAL_LENGTH));
+            parsedData.putIfAbsent(champs[23], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_APERTURE));
+            parsedData.putIfAbsent(champs[23], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FNUMBER));
+            parsedData.putIfAbsent(champs[24], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_MAX_APERTURE));
+            parsedData.putIfAbsent(champs[25], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
+            iso = getInt(exifSubIFDirectory, ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
+            parsedData.putIfAbsent(champs[27], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FLASH));
+            parsedData.putIfAbsent(champs[30], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_USER_COMMENT));
 
         }
 
         if (fileDirectory != null) {
-            String fileName = fileDirectory.getDescription(FileSystemDirectory.TAG_FILE_NAME);
-            String[] fileNameSeparated = fileName.substring(0, fileName.indexOf("." + imageExtension)).split("_");
+            String fileName = getDes(fileDirectory, FileSystemDirectory.TAG_FILE_NAME);
+            fileName = fileName.substring(0, fileName.indexOf("." + imageExtension));
+            String[] fileNameSeparated = fileName.split("_");
+            String reference = null;
+            String date = null, title = null;
+            if (fileNameSeparated[fileNameSeparated.length - 1].matches("\\d{0,5}[.]?\\d{1,5}[.]\\d{1,5}"))
+                date = fileNameSeparated[fileNameSeparated.length - 1];
+
+            if (!fileNameSeparated[0].equals(date))
+                reference = fileNameSeparated[0];
+            if ((fileNameSeparated.length > 1) && (!fileNameSeparated[1].equals(date)))
+                title = fileNameSeparated[1];
+
             parsedData.putIfAbsent(champs[3], fileName);
-            if (fileNameSeparated.length == 3) {
-                parsedData.putIfAbsent(champs[4], fileNameSeparated[0]);
-                parsedData.putIfAbsent(champs[5], fileNameSeparated[1]);
-                parsedData.putIfAbsent(champs[6], fileNameSeparated[2]);
-            } else if (fileNameSeparated.length == 2) {
-                parsedData.putIfAbsent(champs[4], fileNameSeparated[0]);
-                parsedData.putIfAbsent(champs[6], fileNameSeparated[1]);
-            }
+            parsedData.putIfAbsent(champs[4], reference);
+            parsedData.putIfAbsent(champs[5], title);
+            parsedData.putIfAbsent(champs[6], date);
 
 
-            parsedData.putIfAbsent(champs[7], fileDirectory.getDescription(FileSystemDirectory.TAG_FILE_MODIFIED_DATE));
-            parsedData.putIfAbsent(champs[15], String.valueOf(fileDirectory.getFloat(FileSystemDirectory.TAG_FILE_SIZE) / 1024 / 1024));
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(2);
+            parsedData.putIfAbsent(champs[7], getDes(fileDirectory, FileSystemDirectory.TAG_FILE_MODIFIED_DATE));
+            parsedData.putIfAbsent(champs[15], df.format(fileDirectory.getFloat(FileSystemDirectory.TAG_FILE_SIZE) / 1024 / 1024));
         }
+
+        int dpi = 0;
 
         if (exifIFD0Directory != null) {
-            parsedData.putIfAbsent(champs[8], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_IMAGE_DESCRIPTION));
-            parsedData.putIfAbsent(champs[19], String.valueOf(exifIFD0Directory.getInt(ExifIFD0Directory.TAG_X_RESOLUTION)));
-            parsedData.putIfAbsent(champs[20], fileTypeDirectory.getDescription(ExifIFD0Directory.TAG_INTEROP_INDEX));
-            parsedData.putIfAbsent(champs[28], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_MAKE));
-            parsedData.putIfAbsent(champs[29], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_MODEL));
-            parsedData.putIfAbsent(champs[12], exifIFD0Directory.getDescription(ExifIFD0Directory.TAG_ARTIST));
+            String textDes = parsedData.get(champs[8]);
+            String imageDes = getDes(exifIFD0Directory, ExifIFD0Directory.TAG_IMAGE_DESCRIPTION);
+            imageDes = htmlStrip(imageDes);
+            if (textDes != null) {
+                if (imageDes != null) {
+                    if (!textDes.trim().equals(imageDes.trim()))
+                        parsedData.put(champs[8], (textDes.trim() + ". " + imageDes.trim()).replaceAll("\\.{2}", ".")
+                                .replaceAll("\\.{2}", "..."));
+                } else
+                    parsedData.put(champs[8], textDes);
+            } else {
+                if (imageDes != null) {
+                    parsedData.put(champs[8], imageDes);
+                }
+            }
 
+            dpi = getInt(exifIFD0Directory, ExifIFD0Directory.TAG_X_RESOLUTION);
+            parsedData.putIfAbsent(champs[28], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_MAKE));
+            parsedData.putIfAbsent(champs[29], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_MODEL));
+            parsedData.putIfAbsent(champs[12], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_ARTIST));
+
+            bitDepth = Math.max(bitDepth, getInt(exifIFD0Directory, ExifIFD0Directory.TAG_BITS_PER_SAMPLE));
         }
 
-        parsedData.putIfAbsent(champs[16], String.valueOf(jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_WIDTH)));
-        parsedData.putIfAbsent(champs[17], String.valueOf(jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_HEIGHT)));
+        if (iptcDirectory != null) {
+            String imageKey = getDes(iptcDirectory, IptcDirectory.TAG_KEYWORDS);
+            String textKey = parsedData.get(champs[14]);
 
-        if (jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_WIDTH) > jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_HEIGHT))
+            if (textKey != null) {
+                if (imageKey != null) {
+                    if (!imageKey.equals(textKey))
+                        parsedData.putIfAbsent(champs[14], imageKey + textKey);
+                }
+            }
+
+            parsedData.putIfAbsent(champs[14], imageKey);
+        }
+
+        if (fileDirectory != null) {
+            parsedData.putIfAbsent(champs[20], getDes(fileTypeDirectory, FileTypeDirectory.TAG_DETECTED_FILE_TYPE_NAME));
+        }
+
+        if (pngDirectory != null) {
+            width = getInt(pngDirectory, PngDirectory.TAG_IMAGE_WIDTH);
+            height = getInt(pngDirectory, PngDirectory.TAG_IMAGE_HEIGHT);
+            bitDepth = getInt(pngDirectory, PngDirectory.TAG_BITS_PER_SAMPLE);
+        }
+        if (gifHeaderDirectory != null) {
+            width = getInt(gifHeaderDirectory, GifHeaderDirectory.TAG_IMAGE_WIDTH);
+            height = getInt(gifHeaderDirectory, GifHeaderDirectory.TAG_IMAGE_HEIGHT);
+            bitDepth = Math.max(bitDepth, getInt(gifHeaderDirectory, GifHeaderDirectory.TAG_BITS_PER_PIXEL));
+        }
+        if (bmpHeaderDirectory != null) {
+            width = getInt(bmpHeaderDirectory, BmpHeaderDirectory.TAG_IMAGE_WIDTH);
+            height = getInt(bmpHeaderDirectory, BmpHeaderDirectory.TAG_IMAGE_HEIGHT);
+            bitDepth = getInt(bmpHeaderDirectory, BmpHeaderDirectory.TAG_BITS_PER_PIXEL);
+        }
+
+        parsedData.putIfAbsent(champs[16], String.valueOf(width));
+        parsedData.putIfAbsent(champs[17], String.valueOf(height));
+//        System.out.println(numChannel + " " + bitDepth);
+        parsedData.putIfAbsent(champs[18], String.valueOf(numChannel * bitDepth));
+        parsedData.putIfAbsent(champs[19], String.valueOf(dpi));
+        if (iso != 0)
+            parsedData.putIfAbsent(champs[26], String.valueOf(iso));
+        if (width > height)
             parsedData.putIfAbsent(champs[21], "horizontal");
-        else if (jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_WIDTH) < jpegDirectory.getInt(JpegDirectory.TAG_IMAGE_HEIGHT))
+        else if (width < height)
             parsedData.putIfAbsent(champs[21], "vertical");
         else
             parsedData.putIfAbsent(champs[21], "quadratic");
 
-        if (iptcDirectory != null)
-            parsedData.putIfAbsent(champs[14], iptcDirectory.getDescription(IptcDirectory.TAG_KEYWORDS));
-
-        parsedData.putIfAbsent(champs[18], (numChannel * bitDepth) + "");
 
     }
 
@@ -288,8 +410,8 @@ public class DataModel {
         try {
             loadExif();
         } catch (MetadataException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        parsedData.putIfAbsent(champs[19], imageExtension.toUpperCase());
+        parsedData.putIfAbsent(champs[20], imageExtension.toUpperCase());
     }
 }

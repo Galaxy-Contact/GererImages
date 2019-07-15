@@ -8,8 +8,12 @@ import model.ExcelHandler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainGUI extends JFrame {
+
+    private HashMap<String, ArrayList<DataModel>> mapFileName = new HashMap<>();
 
     private ExcelHandler excel = new ExcelHandler(this);
 
@@ -22,8 +26,8 @@ public class MainGUI extends JFrame {
     private JTextArea txtInfos = new JTextArea();
     private JLabel lblDirectory = new JLabel("List images");
     private JLabel lblInfos = new JLabel("Information");
-    private BrowseController browseController = new BrowseController(listImageData, this);
-    private ExportController exportController = new ExportController(listImageData, excel, this);
+    private BrowseController browseController = new BrowseController(listImageData, mapFileName, this);
+    private ExportController exportController = new ExportController(listImageData, excel, mapFileName, this);
     private ListListener listListener = new ListListener(listImageData, txtInfos);
 
     public JProgressBar getProgressBar() {
@@ -84,13 +88,14 @@ public class MainGUI extends JFrame {
         pnlInfoCenter.add(progressBar, BorderLayout.SOUTH);
 
 
-
         btnBrowse.setPreferredSize(new Dimension(100, 30));
         btnBrowse.setHorizontalTextPosition(JButton.CENTER);
         btnExport.setPreferredSize(new Dimension(100, 30));
         btnExport.setHorizontalTextPosition(JButton.CENTER);
+
         pnlButtons.add(btnBrowse);
         pnlButtons.add(btnExport);
+
 
         listImage.setCellRenderer(new DefaultListCellRenderer() {
             @Override
@@ -107,7 +112,6 @@ public class MainGUI extends JFrame {
         lblInfos.setFont(fontLabel);
         listImage.setFont(fontText);
         txtInfos.setFont(fontText);
-
 
 
     }
