@@ -27,7 +27,6 @@ public class BrowseController implements ActionListener {
         JFileChooser fileChooser = new JFileChooser(".");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-
         int clicked = fileChooser.showOpenDialog(null);
 
         if (fileChooser.getSelectedFile() == null) {
@@ -37,7 +36,7 @@ public class BrowseController implements ActionListener {
 
         if (clicked == fileChooser.getApproveButtonMnemonic()) {
             Path filePath = fileChooser.getSelectedFile().toPath();
-            LoadfileTask loadTask = new LoadfileTask(data, mapFileName, parent, filePath);
+            LoadFileTask loadTask = new LoadFileTask(data, mapFileName, parent, filePath);
             loadTask.execute();
         }
 

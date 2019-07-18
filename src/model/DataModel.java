@@ -5,32 +5,29 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
-import com.drew.metadata.Tag;
 import com.drew.metadata.bmp.BmpHeaderDirectory;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.file.FileSystemDirectory;
 import com.drew.metadata.file.FileTypeDirectory;
 import com.drew.metadata.gif.GifHeaderDirectory;
-import com.drew.metadata.gif.GifImageDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.jpeg.JpegDirectory;
 import com.drew.metadata.png.PngDirectory;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DataModel {
 
 
-    private String fileName, imageExtension, infos, directory;
+    private String fileName, imageExtension, directory;
 
     public int getID() {
         return id;
@@ -55,19 +52,18 @@ public class DataModel {
         return parsedData;
     }
 
-    public String getDirectory() {
-        return directory;
-    }
-
     public String getFileName() {
         return fileName;
     }
 
     private Metadata metadata;
 
-    public String getInfos() {
-        return infos;
+    private ArrayList<String> textFiles;
+
+    public void setTextFiles(ArrayList<String> textFiles) {
+        this.textFiles = textFiles;
     }
+
 
     public DataModel(int id, String directory, String fileName, String imageExtension) {
         this.fileName = fileName;
@@ -76,33 +72,78 @@ public class DataModel {
         this.imageExtension = imageExtension;
     }
 
-    public void loadInfos(String directoryToImage) throws IOException {
-        StringBuilder res = new StringBuilder();
-        String line;
-        String filePath = directoryToImage.replace("." + imageExtension, ".txt");
-        File f = new File(filePath);
-        if (!f.isFile())
-            return;
-        BufferedReader br = new BufferedReader(new FileReader(f));
-        while ((line = br.readLine()) != null) {
-            res.append("\n").append(line);
+    public void debug() {
+        System.out.println("======================");
+        for (String champ : champs) {
+            System.out.println(champ + "\t" + parsedData.get(champ));
         }
-        infos = res.toString();
+        System.out.println("======================");
     }
 
-    public void parseData() {
-        parsedData.putIfAbsent(champs[1], (id + 1) + "");
+    public void loadInfos() throws IOException {
+        for (String textDir : textFiles) {
+            File f = new File(textDir);
+            StringBuilder infos = new StringBuilder();
+            String line;
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            while ((line = br.readLine()) != null) {
+                infos.append("\n").append(line);
+            }
+            parseData(infos.toString());
+        }
+        parseData("");
+    }
+
+    public void parseData(String infos) {
+        parsedData.put(champs[1], (id + 1) + "");
         if (infos == null)
+            return;
+        if (infos.equals(""))
             return;
         String[] splited = infos.split("\n");
         for (int i = 0; i < splited.length; i++)
             splited[i] = splited[i].trim();
-        parsedData.putIfAbsent(champs[5], htmlStrip(getBigText(splited, "TITLE")));
-        parsedData.putIfAbsent(champs[6], getTakenDate(splited));
-        parsedData.putIfAbsent(champs[8], htmlStrip(getBigText(splited, "DESCRIPTION")));
-        parsedData.putIfAbsent(champs[12], htmlStrip(getCredit(splited)));
-        parsedData.putIfAbsent(champs[11], getFL(splited));
-        parsedData.putIfAbsent(champs[14], getTags(splited));
+        String cur;
+        cur = parsedData.get(champs[5]);
+        parsedData.put(champs[5], concat(htmlStrip(getBigText(splited, "TITLE")), cur));
+        parsedData.put(champs[6], getTakenDate(splited));
+        cur = parsedData.get(champs[8]);
+        parsedData.put(champs[8], concat(htmlStrip(getBigText(splited, "DESCRIPTION")), cur));
+        cur = parsedData.get(champs[12]);
+        parsedData.put(champs[12], concat(htmlStrip(getCredit(splited)), cur));
+        cur = parsedData.get(champs[11]);
+        parsedData.put(champs[11], concat(getFL(splited), cur, " / "));
+        cur = parsedData.get(champs[14]);
+        parsedData.put(champs[14], concat(getTags(splited), cur));
+    }
+
+    private String concat(String neww, String cur) {
+        if ((neww == null) || (neww.equals("(no description)")))
+            neww = "";
+        if ((cur == null) || (cur.equals("(no description)")))
+            cur = "";
+        return concat(neww, cur, ". ");
+    }
+
+    private String concat(String neww, String cur, String separate) {
+        if ((neww == null) || (neww.equals("(no description)")))
+            neww = "";
+        if ((cur == null) || (cur.equals("(no description)")))
+            cur = "";
+        neww = neww.trim();
+        cur = cur.trim();
+        if (cur.endsWith(separate.trim()) && neww.contains(cur))
+            return neww;
+        if ((!cur.endsWith(separate.trim())) && neww.contains(cur + "."))
+            return neww;
+        if (neww.endsWith(separate.trim()) && cur.contains(neww))
+            return cur;
+        if ((!neww.endsWith(separate.trim())) && cur.contains(neww + "."))
+            return cur;
+        String res = (cur + separate + neww).replaceAll("\\.{2}", ".").replaceAll("\\.{2}", "...").trim();
+        while (res.startsWith(separate.trim()))
+            res = res.substring(2);
+        return res;
     }
 
     private String getCredit(String[] splited) {
@@ -169,9 +210,9 @@ public class DataModel {
                 tags.append(t).append(";");
         }
         if (tags.charAt(tags.length() - 1) == '\"')
-            return tags.substring(0, tags.length() - 3);
-        else
             return tags.substring(0, tags.length() - 2);
+        else
+            return tags.substring(0, tags.length() - 1);
     }
 
     private String delete(String s, String target) {
@@ -238,6 +279,7 @@ public class DataModel {
             return directory.getDescription(tag);
         else return null;
     }
+
     private int getInt(Directory directory, int tag) {
         if (directory.containsTag(tag)) {
             try {
@@ -260,7 +302,6 @@ public class DataModel {
         Directory pngDirectory = metadata.getFirstDirectoryOfType(PngDirectory.class);
         Directory gifHeaderDirectory = metadata.getFirstDirectoryOfType(GifHeaderDirectory.class);
         Directory bmpHeaderDirectory = metadata.getFirstDirectoryOfType(BmpHeaderDirectory.class);
-
 
 
         int numChannel = 3, bitDepth = 0;

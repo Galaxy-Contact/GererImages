@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class ExportController implements ActionListener {
 
@@ -42,29 +43,8 @@ public class ExportController implements ActionListener {
 
     private void concatAllInformation() {
         int length = data.size();
-        for (int i = 0; i < length; i++) {
-            if (done.containsKey(LoadfileTask.getKeyFileName(data.get(i).getFileName())))
-                continue;
-
-            ArrayList<DataModel> objectsData = mapFileName.get(LoadfileTask.getKeyFileName(data.get(i).getFileName()));
-
-            String currentDescription = "", currentTitle = "";
-
-            for (DataModel d : objectsData) {
-                HashMap<String, String> temp = d.getParsedData();
-                currentDescription = concat(currentDescription, temp, champs[8]);
-                currentTitle = (temp.get(champs[5]) != null) ? temp.get(champs[5]) : "";
-            }
-            for (DataModel d : objectsData) {
-                d.getParsedData().put(champs[8], currentDescription);
-                d.getParsedData().putIfAbsent(champs[5], currentTitle);
-            }
-            done.put(LoadfileTask.getKeyFileName(data.get(i).getFileName()), true);
-        }
 
         for (String champ : new String[] {champs[8], champs[14]}) {
-            if (champ.equals(""))
-                continue;
             String champKey = champ.substring(champ.indexOf("_") + 1, champ.lastIndexOf("_"));
             if (champ.equals(champs[14]))
                 champKey = "tags";
@@ -91,26 +71,16 @@ public class ExportController implements ActionListener {
         }
     }
 
-    private String concat(String currentString, HashMap<String, String> other, String champ) {
-        other.putIfAbsent(champ, "");
-        if (!currentString.contains(other.get(champ)))
-            if (currentString.equals(""))
-                currentString += other.get(champ).trim();
-            else
-                currentString += ". " + other.get(champ).trim();
-        return currentString.replaceAll("\\.{2}", ".").replaceAll("\\.{2}", "...");
-    }
-
     private void finalControl() {
         int length = data.size();
         for (int i = 0; i < length; i ++) {
             HashMap<String, String> dm;
             dm = data.get(i).getParsedData();
             String description = dm.get(champs[8]);
-            String ref = LoadfileTask.getKeyFileName(dm.get(champs[4]));
+            String ref = LoadFileTask.refFromFileName(dm.get(champs[4]));
 
             // Title
-            String titre = LoadfileTask.getKeyFileName(dm.get(champs[5]));
+            String titre = LoadFileTask.refFromFileName(dm.get(champs[5]));
             if ((titre != null) && (ref != null)) {
                 titre = titre.toLowerCase();
                 if (titre.contains(ref.toLowerCase())) {
@@ -125,6 +95,8 @@ public class ExportController implements ActionListener {
             dm.put(champs[8], description.replaceAll("&amp;", "&"));
             if (description.trim().equals("(no description)"))
                 dm.put(champs[8], null);
+            description = description.replaceAll(Objects.requireNonNull(LoadFileTask.refFromFileName(data.get(i).getFileName())), "");
+            dm.put(champs[8], description.replaceAll("&amp;", "&"));
             if (!description.contains("---"))
                 continue;
             dm.put(champs[8], description.substring(description.indexOf("(")).replaceAll("&amp;", "&"));
@@ -152,17 +124,6 @@ public class ExportController implements ActionListener {
                 excel.setOutputFile(new File(exportChooser.getSelectedFile().toString() + ".xls"));
 
             int length = data.size();
-
-            for (int i = 0; i < length; i ++) {
-                data.get(i).parseData();
-                try {
-                    data.get(i).parseImage();
-                } catch (ImageProcessingException | IOException e) {
-                    JOptionPane.showMessageDialog(parent, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                parent.getProgressBar().setValue((int) (((float) i) / length * parent.getProgressBar().getMaximum() / 2));
-                parent.getProgressBar().setString("Gathering infos " + (i + 1) + " of " + length);
-            }
 
 
             parent.getProgressBar().setString("Finalizing data...");

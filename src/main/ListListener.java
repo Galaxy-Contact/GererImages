@@ -21,6 +21,6 @@ public class ListListener extends MouseAdapter {
         int index = ((JList) e.getSource()).getSelectedIndex();
         if (index < 0)
             return;
-        txtInfos.setText(data.get(index).getInfos());
+//        txtInfos.setText(data.get(index).getInfos());
     }
 }

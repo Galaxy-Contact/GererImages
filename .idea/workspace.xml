@@ -2,16 +2,20 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="GererImages:jar" />
+      <artifact name="Image Infos Collector:jar" />
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30841439-b7ee-44fb-81dc-12c7d6a875a1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/MainGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/GererImages_jar/test" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/GererImages/META-INF/GererImages.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/GererImages/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/BrowseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BrowseController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/ExportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ExportController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ListListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ListListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/LoadfileTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/LoadFileTask.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/DataModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/DataModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/ExcelHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/ExcelHandler.java" afterDir="false" />
     </list>
@@ -30,11 +34,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/model/DataModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" column="26" lean-forward="true" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
+            <state relative-caret-position="126">
+              <caret line="145" column="19" lean-forward="true" selection-start-line="145" selection-start-column="19" selection-end-line="145" selection-end-column="19" />
               <folding>
-                <element signature="e#765#766#0" expanded="true" />
-                <element signature="e#790#791#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#2726#2727#0" expanded="true" />
+                <element signature="e#2768#2769#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -43,13 +48,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/gui/MainGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="348">
-              <caret line="116" column="29" selection-start-line="116" selection-start-column="29" selection-end-line="116" selection-end-column="29" />
+            <state relative-caret-position="85">
+              <caret line="14" selection-start-line="14" selection-end-line="14" />
               <folding>
-                <element signature="e#1093#1094#0" expanded="true" />
-                <element signature="e#1127#1128#0" expanded="true" />
-                <element signature="e#3164#3717#0" expanded="true" />
-                <element signature="e#3716#3717#0" expanded="true" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -58,8 +60,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/ListListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="20" column="63" selection-start-line="20" selection-start-column="63" selection-end-line="20" selection-end-column="63" />
+            <state relative-caret-position="239">
+              <caret line="23" column="55" selection-start-line="23" selection-start-column="55" selection-end-line="23" selection-end-column="55" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -70,8 +72,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/BrowseController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="70" selection-start-line="70" selection-end-line="70" />
+            <state relative-caret-position="68">
+              <caret line="25" column="49" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="49" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/LoadFileTask.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="130">
+              <caret line="77" column="31" selection-start-line="77" selection-start-column="31" selection-end-line="77" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -82,10 +96,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/ExcelHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="55" column="43" selection-start-line="55" selection-start-column="43" selection-end-line="55" selection-end-column="43" />
+            <state relative-caret-position="-44">
+              <caret line="71" column="43" selection-start-line="71" selection-start-column="43" selection-end-line="71" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1369#1370#0" expanded="true" />
+                <element signature="e#1405#1406#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -94,11 +110,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/ExportController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1037">
-              <caret line="61" column="37" selection-start-line="61" selection-start-column="37" selection-end-line="61" selection-end-column="37" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="68">
+              <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -106,11 +119,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="7" column="44" selection-start-line="7" selection-start-column="44" selection-end-line="7" selection-end-column="44" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="51">
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
             </state>
           </provider>
         </entry>
@@ -126,42 +136,43 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>syste</find>
-      <find>system</find>
-      <find>sys</find>
-      <find>imageFile</find>
-      <find>load</find>
-      <find>loadMeta</find>
-      <find>has not been se</find>
-      <find>apert</find>
-      <find>null</find>
-      <find>flas</find>
-      <find>getString</find>
-      <find>start</find>
-      <find>flash</find>
-      <find>start f</find>
-      <find>parsedData.put</find>
-      <find>parsedData.put(</find>
-      <find>file</find>
+      <find>listImage</find>
+      <find>listimage</find>
+      <find>doIn</find>
+      <find>material</find>
+      <find>exif</find>
+      <find>ifd0</find>
       <find>format</find>
-      <find>INTER</find>
-      <find>ori</find>
-      <find>focal</find>
-      <find>comment</find>
-      <find>31</find>
-      <find>return &quot;&quot;;</find>
-      <find>champs[12]</find>
-      <find>listIm</find>
-      <find>credit</find>
-      <find>listImageData</find>
+      <find>jpeg</find>
+      <find>image_wi</find>
+      <find>fileType</find>
+      <find>.getInt</find>
+      <find>wid</find>
+      <find>jpegDi</find>
+      <find>aperture</find>
+      <find>getIn</find>
+      <find>numchann</find>
+      <find>system.out</find>
+      <find>system.ou</find>
+      <find>getKey</find>
+      <find>date</find>
       <find>champs[6]</find>
-      <find>69-H-1055_7.2.69</find>
+      <find>total</find>
+      <find>director</find>
+      <find>loadin</find>
+      <find>mapFilenam</find>
+      <find>loadIn</find>
+      <find>getTag</find>
+      <find>description</find>
+      <find>debug</find>
+      <find>concat</find>
     </findStrings>
     <replaceStrings>
       <replace>getDescription</replace>
       <replace>parsedData.putIfAbsent</replace>
       <replace>parsedData.putIfAbsent(</replace>
       <replace>return null;</replace>
+      <replace>getStringByTag(exifSubIfDirectory, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL)</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -172,18 +183,26 @@
       <list>
         <option value="$PROJECT_DIR$/src/gui/Starter.java" />
         <option value="$PROJECT_DIR$/src/main/Controller.java" />
-        <option value="$PROJECT_DIR$/src/main/Main.java" />
         <option value="$PROJECT_DIR$/src/model/XSSFWorkbook.java" />
         <option value="$PROJECT_DIR$/src/gui/Thumbnail.java" />
-        <option value="$PROJECT_DIR$/src/main/ListListener.java" />
         <option value="$PROJECT_DIR$/src/gui/LoadingWindow.java" />
-        <option value="$PROJECT_DIR$/src/main/ExportController.java" />
-        <option value="$PROJECT_DIR$/src/model/ExcelHandler.java" />
-        <option value="$PROJECT_DIR$/src/main/BrowseController.java" />
+        <option value="$PROJECT_DIR$/src/main/Main.java" />
         <option value="$PROJECT_DIR$/src/gui/MainGUI.java" />
+        <option value="$PROJECT_DIR$/src/main/LoadfileTask.java" />
+        <option value="$PROJECT_DIR$/src/main/ListListener.java" />
+        <option value="$PROJECT_DIR$/src/main/BrowseController.java" />
+        <option value="$PROJECT_DIR$/src/main/ExportController.java" />
+        <option value="$PROJECT_DIR$/src/main/LoadFileTask.java" />
+        <option value="$PROJECT_DIR$/src/model/ExcelHandler.java" />
         <option value="$PROJECT_DIR$/src/model/DataModel.java" />
       </list>
     </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand />
+      <select />
+    </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="4" />
@@ -197,8 +216,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -239,13 +258,18 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="last.edited.regexp" value="" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../JarLibs/POI/poi-4.1.0.jar!/" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="main.Task" />
+    </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="model" />
     </key>
@@ -268,7 +292,7 @@
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.Main" />
-      <module name="GererImages" />
+      <module name="ImageInfosCollector" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -300,18 +324,37 @@
       <workItem from="1562558490046" duration="10934000" />
       <workItem from="1562579400346" duration="3793000" />
       <workItem from="1562639684106" duration="1291000" />
-      <workItem from="1562674356401" duration="8376000" />
+      <workItem from="1562674356401" duration="9758000" />
+      <workItem from="1562743299476" duration="9253000" />
+      <workItem from="1562760476363" duration="12995000" />
+      <workItem from="1562789944804" duration="2195000" />
+      <workItem from="1562792575188" duration="9399000" />
+      <workItem from="1562829926740" duration="2351000" />
+      <workItem from="1562834351057" duration="1202000" />
+      <workItem from="1562843765152" duration="285000" />
+      <workItem from="1562844206027" duration="689000" />
+      <workItem from="1562857536984" duration="3536000" />
+      <workItem from="1562869130061" duration="1592000" />
+      <workItem from="1562879534928" duration="6560000" />
+      <workItem from="1562916643291" duration="3057000" />
+      <workItem from="1562920907410" duration="11231000" />
+      <workItem from="1563175773048" duration="2227000" />
+      <workItem from="1563178100602" duration="975000" />
+      <workItem from="1563182526045" duration="1023000" />
+      <workItem from="1563198256409" duration="377000" />
+      <workItem from="1563283490991" duration="110000" />
+      <workItem from="1563443042313" duration="14500000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81882000" />
+    <option name="totallyTimeSpent" value="166821000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22087745" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.2934947" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -320,7 +363,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32733223" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.26841244" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.5008183" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -328,7 +371,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3289689" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3289689" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.3289256" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32569557" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -337,7 +380,7 @@
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info anchor="right" id="Maven" order="6" />
+      <window_info anchor="right" id="Maven" order="6" weight="0.32980332" />
       <window_info anchor="right" id="Capture Analysis" order="7" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
     </layout>
@@ -363,50 +406,24 @@
     <entry file="jar://$PROJECT_DIR$/../JarLibs/metadata-extractor-2.12.0.jar!/com/drew/metadata/Directory.class">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ExportController.java">
+    <entry file="jar://C:/Program Files/Java/jdk-12.0.1/lib/src.zip!/java.desktop/javax/swing/plaf/basic/BasicListUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1037">
-          <caret line="61" column="37" selection-start-line="61" selection-start-column="37" selection-end-line="61" selection-end-column="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/ListListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="63" selection-start-line="20" selection-start-column="63" selection-end-line="20" selection-end-column="63" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/ExcelHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="55" column="43" selection-start-line="55" selection-start-column="43" selection-end-line="55" selection-end-column="43" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="112">
+          <caret line="1445" column="35" selection-start-line="1445" selection-start-column="35" selection-end-line="1445" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="7" column="44" selection-start-line="7" selection-start-column="44" selection-end-line="7" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/BrowseController.java">
+    <entry file="file://$PROJECT_DIR$/src/main/ListListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="70" selection-start-line="70" selection-end-line="70" />
+        <state relative-caret-position="239">
+          <caret line="23" column="55" selection-start-line="23" selection-start-column="55" selection-end-line="23" selection-end-column="55" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -415,24 +432,61 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gui/MainGUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="116" column="29" selection-start-line="116" selection-start-column="29" selection-end-line="116" selection-end-column="29" />
+        <state relative-caret-position="85">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
           <folding>
-            <element signature="e#1093#1094#0" expanded="true" />
-            <element signature="e#1127#1128#0" expanded="true" />
-            <element signature="e#3164#3717#0" expanded="true" />
-            <element signature="e#3716#3717#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/BrowseController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="25" column="49" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/LoadFileTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="77" column="31" selection-start-line="77" selection-start-column="31" selection-end-line="77" selection-end-column="31" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/ExportController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/ExcelHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-44">
+          <caret line="71" column="43" selection-start-line="71" selection-start-column="43" selection-end-line="71" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1369#1370#0" expanded="true" />
+            <element signature="e#1405#1406#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/model/DataModel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="26" lean-forward="true" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
+        <state relative-caret-position="126">
+          <caret line="145" column="19" lean-forward="true" selection-start-line="145" selection-start-column="19" selection-end-line="145" selection-end-column="19" />
           <folding>
-            <element signature="e#765#766#0" expanded="true" />
-            <element signature="e#790#791#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#2726#2727#0" expanded="true" />
+            <element signature="e#2768#2769#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -443,11 +497,12 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
-          <last-edited>GererImages:jar</last-edited>
+          <last-edited>Image Infos Collector:jar</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
@@ -490,7 +545,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>GererImages</last-edited>
+          <last-edited>ImageInfosCollector</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

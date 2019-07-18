@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GererImages.iml" filepath="$PROJECT_DIR$/GererImages.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ImageInfosCollector.iml" filepath="$PROJECT_DIR$/ImageInfosCollector.iml" />
     </modules>
   </component>
 </project>
