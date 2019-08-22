@@ -22,7 +22,7 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
     private HashMap<String, ArrayList<String>> mapImageText = new HashMap<>();
     private File[] dir;
 
-    public LoadFileTask(DefaultListModel<DataModel> data, HashMap<String, ArrayList<DataModel>> mapFileName, MainGUI parent, Path filePath) {
+    LoadFileTask(DefaultListModel<DataModel> data, HashMap<String, ArrayList<DataModel>> mapFileName, MainGUI parent, Path filePath) {
         this.mapFileName = mapFileName;
         this.parent = parent;
         dir = new File(String.valueOf(filePath)).listFiles();
@@ -69,6 +69,7 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
             // Mapping between images and text files
             mapImageText.putIfAbsent(refKey, new ArrayList<>());
             if (!Arrays.asList(imageExtensions).contains(fileExtension)) {
+//                System.out.println(fileName + " " + refKey);
                 mapImageText.get(refKey).add(file.getPath());
             } else {
                 // Add image to files map
@@ -80,6 +81,7 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
             current++;
             publish(current, total, 1);
         }
+
     }
 
     private void crawlFromTextFiles() {

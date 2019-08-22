@@ -1,6 +1,5 @@
 package main;
 
-import com.drew.imaging.ImageProcessingException;
 import gui.MainGUI;
 import model.DataModel;
 import model.ExcelHandler;
@@ -13,17 +12,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class ExportController implements ActionListener {
 
-    private DefaultListModel<DataModel> data, dataFinal = new DefaultListModel<>();
+    private DefaultListModel<DataModel> data;
     private ExcelHandler excel;
     private MainGUI parent;
 
-
-    private HashMap<String, ArrayList<DataModel>> mapFileName;
-    private HashMap<String, Boolean> done = new HashMap<>();
 
     private String[] champs = new String[]{"", "1_Index_INTERNE", "2_Mission_PUBLIC", "3_Référence_Nasa_avec_Titre_INTERNE",
             "4_Référence_Nasa_INTERNE", "5_Titre_PUBLIC", "6_Date_de_prise_de_vue_/_Traitement_de_l’image_PUBLIC",
@@ -38,15 +33,14 @@ public class ExportController implements ActionListener {
         this.data = data;
         this.excel = excel;
         this.parent = parent;
-        this.mapFileName = mapFileName;
     }
 
     private void concatAllInformation() {
         int length = data.size();
 
-        for (String champ : new String[] {champs[8], champs[14]}) {
+        for (String champ : new String[] {champs[8], champs[17]}) {
             String champKey = champ.substring(champ.indexOf("_") + 1, champ.lastIndexOf("_"));
-            if (champ.equals(champs[14]))
+            if (champ.equals(champs[17]))
                 champKey = "tags";
             for (int i = 0; i < length; i ++) {
                 HashMap<String, String> dm = data.get(i).getParsedData();
@@ -73,33 +67,22 @@ public class ExportController implements ActionListener {
 
     private void finalControl() {
         int length = data.size();
+        HashMap<String, String> dm;
         for (int i = 0; i < length; i ++) {
-            HashMap<String, String> dm;
+
             dm = data.get(i).getParsedData();
-            String description = dm.get(champs[8]);
             String ref = LoadFileTask.refFromFileName(dm.get(champs[4]));
 
             // Title
-            String titre = LoadFileTask.refFromFileName(dm.get(champs[5]));
+            String titre = dm.get(champs[5]);
             if ((titre != null) && (ref != null)) {
-                titre = titre.toLowerCase();
-                if (titre.contains(ref.toLowerCase())) {
-                    dm.put(champs[5], titre.replaceAll(ref.toLowerCase(), ""));
-                }
+                titre = titre.replaceAll("_", "-").replaceAll(ref.toLowerCase(), "").replaceAll(ref.toUpperCase(), "");
+                if (titre.equals("."))
+                    titre = "";
+                while (titre.startsWith(". "))
+                    titre = titre.substring(2);
+                dm.put(champs[5], titre);
             }
-
-            // Desc
-
-            if ((description == null) || (ref == null) || description.equals("") || ref.equals(""))
-                continue;
-            dm.put(champs[8], description.replaceAll("&amp;", "&"));
-            if (description.trim().equals("(no description)"))
-                dm.put(champs[8], null);
-            description = description.replaceAll(Objects.requireNonNull(LoadFileTask.refFromFileName(data.get(i).getFileName())), "");
-            dm.put(champs[8], description.replaceAll("&amp;", "&"));
-            if (!description.contains("---"))
-                continue;
-            dm.put(champs[8], description.substring(description.indexOf("(")).replaceAll("&amp;", "&"));
         }
     }
 

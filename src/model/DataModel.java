@@ -14,6 +14,7 @@ import com.drew.metadata.gif.GifHeaderDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.jpeg.JpegDirectory;
 import com.drew.metadata.png.PngDirectory;
+import main.LoadFileTask;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class DataModel {
 
@@ -36,9 +38,9 @@ public class DataModel {
     private int id;
     private String[] champs = new String[]{"", "1_Index_INTERNE", "2_Mission_PUBLIC", "3_Référence_Nasa_avec_Titre_INTERNE",
             "4_Référence_Nasa_INTERNE", "5_Titre_PUBLIC", "6_Date_de_prise_de_vue_/_Traitement_de_l’image_PUBLIC",
-            "7_Date_de_traitement_de_l’image_PUBLIC", "8_Description_PUBLIC",
+            "7_Date_de_traitement_de_l’image_PUBLIC", "8_Description_PUBLIC", "Description_Generique",
             "9_Référence_Galaxy_PUBLIC", "10_Référence_Nasa_ou_FL/Galaxy_INTERNE", "11_Référence_FL_INTERNE", "12_Credit_PUBLIC",
-            "13_Wikipedia_Infos_about_...._PUBLIC", "14_Mots_clés_PUBLIC", "15_Taille_MB_PUBLIC", "16_Width_PUBLIC", "17_Height_PUBLIC",
+            "13_Wikipedia_Infos_about_...._PUBLIC", "14_Mots_clés_PUBLIC", "Mots_clés_Generique", "Colour", "15_Taille_MB_PUBLIC", "16_Width_PUBLIC", "17_Height_PUBLIC",
             "18_Depth_PUBLIC", "19_Dpi_PUBLIC", "20_Format_PUBLIC", "21_Orientation_PUBLIC", "22_Focal_Length_PUBLIC",
             "23_Aperture_PUBLIC", "24_Aperture maxi_PUBLIC", "25_Exposure_PUBLIC", "26_Sensitivity_PUBLIC",
             "27_Mode Flash_PUBLIC", "28_Manufacturer_PUBLIC", "29_Model_PUBLIC", "30_User_Comment_INTERNE", "31_Propriétaire_PUBLIC"};
@@ -72,16 +74,10 @@ public class DataModel {
         this.imageExtension = imageExtension;
     }
 
-    public void debug() {
-        System.out.println("======================");
-        for (String champ : champs) {
-            System.out.println(champ + "\t" + parsedData.get(champ));
-        }
-        System.out.println("======================");
-    }
-
     public void loadInfos() throws IOException {
+//        System.out.println(fileName + " " + textFiles);
         for (String textDir : textFiles) {
+//            System.out.println(textDir);
             File f = new File(textDir);
             StringBuilder infos = new StringBuilder();
             String line;
@@ -89,12 +85,13 @@ public class DataModel {
             while ((line = br.readLine()) != null) {
                 infos.append("\n").append(line);
             }
+            System.out.println(textDir);
             parseData(infos.toString());
         }
         parseData("");
     }
 
-    public void parseData(String infos) {
+    private void parseData(String infos) {
         parsedData.put(champs[1], (id + 1) + "");
         if (infos == null)
             return;
@@ -105,16 +102,18 @@ public class DataModel {
             splited[i] = splited[i].trim();
         String cur;
         cur = parsedData.get(champs[5]);
+//        System.out.println(cur + " (+) " + htmlStrip(getBigText(splited, "TITLE")));
         parsedData.put(champs[5], concat(htmlStrip(getBigText(splited, "TITLE")), cur));
+//        System.out.println("\t=>" + concat(htmlStrip(getBigText(splited, "TITLE")), cur));
         parsedData.put(champs[6], getTakenDate(splited));
         cur = parsedData.get(champs[8]);
         parsedData.put(champs[8], concat(htmlStrip(getBigText(splited, "DESCRIPTION")), cur));
+        cur = parsedData.get(champs[13]);
+        parsedData.put(champs[13], concat(htmlStrip(getCredit(splited)), cur));
         cur = parsedData.get(champs[12]);
-        parsedData.put(champs[12], concat(htmlStrip(getCredit(splited)), cur));
-        cur = parsedData.get(champs[11]);
-        parsedData.put(champs[11], concat(getFL(splited), cur, " / "));
-        cur = parsedData.get(champs[14]);
-        parsedData.put(champs[14], concat(getTags(splited), cur));
+        parsedData.put(champs[12], concat(getFL(splited), cur, " / "));
+        cur = parsedData.get(champs[17]);
+        parsedData.put(champs[17], concat(getTags(splited), cur));
     }
 
     private String concat(String neww, String cur) {
@@ -132,18 +131,17 @@ public class DataModel {
             cur = "";
         neww = neww.trim();
         cur = cur.trim();
-        if (cur.endsWith(separate.trim()) && neww.contains(cur))
+
+        if (neww.toLowerCase().contains(cur.toLowerCase()))
             return neww;
-        if ((!cur.endsWith(separate.trim())) && neww.contains(cur + "."))
-            return neww;
-        if (neww.endsWith(separate.trim()) && cur.contains(neww))
-            return cur;
-        if ((!neww.endsWith(separate.trim())) && cur.contains(neww + "."))
+        if (cur.toLowerCase().contains(neww.toLowerCase()))
             return cur;
         String res = (cur + separate + neww).replaceAll("\\.{2}", ".").replaceAll("\\.{2}", "...").trim();
+        if (res.equals(separate.trim()))
+            return null;
         while (res.startsWith(separate.trim()))
             res = res.substring(2);
-        return res;
+        return res.trim();
     }
 
     private String getCredit(String[] splited) {
@@ -171,7 +169,15 @@ public class DataModel {
         }
         if (res.toString().equals(""))
             return null;
-        return res.toString();
+
+        String ret = res.toString().replaceAll("&amp;", "&");
+        if (ret.trim().equals("(no description)"))
+            return null;
+        ret = ret.replaceAll(Objects.requireNonNull(LoadFileTask.refFromFileName(fileName)), "");
+        if (ret.contains("---"))
+            ret = ret.substring(ret.indexOf("("));
+
+        return ret;
     }
 
     private String getTakenDate(String[] splited) {
@@ -330,20 +336,20 @@ public class DataModel {
                 height = getInt(exifSubIFDirectory, ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
             }
             parsedData.putIfAbsent(champs[6], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
-            parsedData.putIfAbsent(champs[22], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FOCAL_LENGTH));
-            parsedData.putIfAbsent(champs[23], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_APERTURE));
-            parsedData.putIfAbsent(champs[23], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FNUMBER));
-            parsedData.putIfAbsent(champs[24], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_MAX_APERTURE));
-            parsedData.putIfAbsent(champs[25], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
+            parsedData.putIfAbsent(champs[25], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FOCAL_LENGTH));
+            parsedData.putIfAbsent(champs[26], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_APERTURE));
+            parsedData.putIfAbsent(champs[26], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FNUMBER));
+            parsedData.putIfAbsent(champs[27], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_MAX_APERTURE));
+            parsedData.putIfAbsent(champs[28], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
             iso = getInt(exifSubIFDirectory, ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
-            parsedData.putIfAbsent(champs[27], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FLASH));
-            parsedData.putIfAbsent(champs[30], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_USER_COMMENT));
+            parsedData.putIfAbsent(champs[30], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_FLASH));
+            parsedData.putIfAbsent(champs[33], getDes(exifSubIFDirectory, ExifSubIFDDirectory.TAG_USER_COMMENT));
 
         }
 
         if (fileDirectory != null) {
             String fileName = getDes(fileDirectory, FileSystemDirectory.TAG_FILE_NAME);
-            fileName = fileName.substring(0, fileName.indexOf("." + imageExtension));
+            fileName = fileName.substring(0, fileName.lastIndexOf("." + imageExtension));
             String[] fileNameSeparated = fileName.split("_");
             String reference = null;
             String date = null, title = null;
@@ -367,7 +373,7 @@ public class DataModel {
             DecimalFormat df = new DecimalFormat();
             df.setMaximumFractionDigits(2);
             parsedData.putIfAbsent(champs[7], getDes(fileDirectory, FileSystemDirectory.TAG_FILE_MODIFIED_DATE));
-            parsedData.putIfAbsent(champs[15], df.format(fileDirectory.getFloat(FileSystemDirectory.TAG_FILE_SIZE) / 1024 / 1024));
+            parsedData.putIfAbsent(champs[18], df.format(fileDirectory.getFloat(FileSystemDirectory.TAG_FILE_SIZE) / 1024 / 1024));
         }
 
         int dpi = 0;
@@ -390,29 +396,29 @@ public class DataModel {
             }
 
             dpi = getInt(exifIFD0Directory, ExifIFD0Directory.TAG_X_RESOLUTION);
-            parsedData.putIfAbsent(champs[28], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_MAKE));
-            parsedData.putIfAbsent(champs[29], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_MODEL));
-            parsedData.putIfAbsent(champs[12], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_ARTIST));
+            parsedData.putIfAbsent(champs[31], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_MAKE));
+            parsedData.putIfAbsent(champs[32], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_MODEL));
+            parsedData.putIfAbsent(champs[13], getDes(exifIFD0Directory, ExifIFD0Directory.TAG_ARTIST));
 
             bitDepth = Math.max(bitDepth, getInt(exifIFD0Directory, ExifIFD0Directory.TAG_BITS_PER_SAMPLE));
         }
 
         if (iptcDirectory != null) {
             String imageKey = getDes(iptcDirectory, IptcDirectory.TAG_KEYWORDS);
-            String textKey = parsedData.get(champs[14]);
+            String textKey = parsedData.get(champs[17]);
 
             if (textKey != null) {
                 if (imageKey != null) {
                     if (!imageKey.equals(textKey))
-                        parsedData.putIfAbsent(champs[14], imageKey + textKey);
+                        parsedData.putIfAbsent(champs[17], imageKey + textKey);
                 }
             }
 
-            parsedData.putIfAbsent(champs[14], imageKey);
+            parsedData.putIfAbsent(champs[17], imageKey);
         }
 
         if (fileDirectory != null) {
-            parsedData.putIfAbsent(champs[20], getDes(fileTypeDirectory, FileTypeDirectory.TAG_DETECTED_FILE_TYPE_NAME));
+            parsedData.putIfAbsent(champs[23], getDes(fileTypeDirectory, FileTypeDirectory.TAG_DETECTED_FILE_TYPE_NAME));
         }
 
         if (pngDirectory != null) {
@@ -431,19 +437,19 @@ public class DataModel {
             bitDepth = getInt(bmpHeaderDirectory, BmpHeaderDirectory.TAG_BITS_PER_PIXEL);
         }
 
-        parsedData.putIfAbsent(champs[16], String.valueOf(width));
-        parsedData.putIfAbsent(champs[17], String.valueOf(height));
+        parsedData.putIfAbsent(champs[19], String.valueOf(width));
+        parsedData.putIfAbsent(champs[20], String.valueOf(height));
 //        System.out.println(numChannel + " " + bitDepth);
-        parsedData.putIfAbsent(champs[18], String.valueOf(numChannel * bitDepth));
-        parsedData.putIfAbsent(champs[19], String.valueOf(dpi));
+        parsedData.putIfAbsent(champs[21], String.valueOf(numChannel * bitDepth));
+        parsedData.putIfAbsent(champs[22], String.valueOf(dpi));
         if (iso != 0)
-            parsedData.putIfAbsent(champs[26], String.valueOf(iso));
+            parsedData.putIfAbsent(champs[29], String.valueOf(iso));
         if (width > height)
-            parsedData.putIfAbsent(champs[21], "horizontal");
+            parsedData.putIfAbsent(champs[24], "horizontal");
         else if (width < height)
-            parsedData.putIfAbsent(champs[21], "vertical");
+            parsedData.putIfAbsent(champs[24], "vertical");
         else
-            parsedData.putIfAbsent(champs[21], "quadratic");
+            parsedData.putIfAbsent(champs[24], "quadratic");
 
 
     }
@@ -456,6 +462,6 @@ public class DataModel {
         } catch (MetadataException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        parsedData.putIfAbsent(champs[20], imageExtension.toUpperCase());
+        parsedData.putIfAbsent(champs[23], imageExtension.toUpperCase());
     }
 }
