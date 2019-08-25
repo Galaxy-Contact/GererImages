@@ -22,9 +22,9 @@ public class ExportController implements ActionListener {
 
     private String[] champs = new String[]{"", "1_Index_INTERNE", "2_Mission_PUBLIC", "3_Référence_Nasa_avec_Titre_INTERNE",
             "4_Référence_Nasa_INTERNE", "5_Titre_PUBLIC", "6_Date_de_prise_de_vue_/_Traitement_de_l’image_PUBLIC",
-            "7_Date_de_traitement_de_l’image_PUBLIC", "8_Description_PUBLIC",
+            "7_Date_de_traitement_de_l’image_PUBLIC", "8_Description_PUBLIC", "Description_Generique",
             "9_Référence_Galaxy_PUBLIC", "10_Référence_Nasa_ou_FL/Galaxy_INTERNE", "11_Référence_FL_INTERNE", "12_Credit_PUBLIC",
-            "13_Wikipedia_Infos_about_...._PUBLIC", "14_Mots_clés_PUBLIC", "15_Taille_MB_PUBLIC", "16_Width_PUBLIC", "17_Height_PUBLIC",
+            "13_Wikipedia_Infos_about_...._PUBLIC", "14_Mots_clés_PUBLIC", "Mots_clés_Generique", "Colour", "15_Taille_MB_PUBLIC", "16_Width_PUBLIC", "17_Height_PUBLIC",
             "18_Depth_PUBLIC", "19_Dpi_PUBLIC", "20_Format_PUBLIC", "21_Orientation_PUBLIC", "22_Focal_Length_PUBLIC",
             "23_Aperture_PUBLIC", "24_Aperture maxi_PUBLIC", "25_Exposure_PUBLIC", "26_Sensitivity_PUBLIC",
             "27_Mode Flash_PUBLIC", "28_Manufacturer_PUBLIC", "29_Model_PUBLIC", "30_User_Comment_INTERNE", "31_Propriétaire_PUBLIC"};
@@ -76,7 +76,7 @@ public class ExportController implements ActionListener {
             // Title
             String titre = dm.get(champs[5]);
             if ((titre != null) && (ref != null)) {
-                titre = titre.replaceAll("_", "-").replaceAll(ref.toLowerCase(), "").replaceAll(ref.toUpperCase(), "");
+                titre = titre.replace("_", "-").replace(ref.toLowerCase(), "").replace(ref.toUpperCase(), "");
                 if (titre.equals("."))
                     titre = "";
                 while (titre.startsWith(". "))

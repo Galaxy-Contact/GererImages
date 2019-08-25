@@ -170,11 +170,11 @@ public class DataModel {
         if (res.toString().equals(""))
             return null;
 
-        String ret = res.toString().replaceAll("&amp;", "&");
+        String ret = res.toString().replace("&amp;", "&");
         if (ret.trim().equals("(no description)"))
             return null;
-        ret = ret.replaceAll(Objects.requireNonNull(LoadFileTask.refFromFileName(fileName)), "");
-        if (ret.contains("---"))
+        ret = ret.replace(Objects.requireNonNull(LoadFileTask.refFromFileName(fileName)), "");
+        if (ret.contains("---") && (ret.contains("(")))
             ret = ret.substring(ret.indexOf("("));
 
         return ret;

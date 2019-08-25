@@ -32,8 +32,6 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
     public static String refFromFileName(String fileName) {
         if (fileName == null)
             return null;
-        if (!fileName.contains("-"))
-            return fileName;
         while (fileName.endsWith("-"))
             fileName = fileName.substring(0, fileName.length() - 1);
         String[] fileNameSeparated = fileName.split("-");
@@ -48,6 +46,17 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
             }
         } catch (NumberFormatException e) {
             keyFileName = fileName;
+        }
+
+        if (keyFileName.equals(fileName)) { // flickr ref
+            fileNameSeparated = fileName.split("_");
+            keyFileName = fileNameSeparated[fileNameSeparated.length - 1].trim();
+            try {
+                Long.parseLong(keyFileName);
+                keyFileName = fileName.substring(0, fileName.lastIndexOf("_"));
+            } catch (NumberFormatException e) {
+                keyFileName = fileName;
+            }
         }
         return keyFileName.toLowerCase();
     }
@@ -69,7 +78,8 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
             // Mapping between images and text files
             mapImageText.putIfAbsent(refKey, new ArrayList<>());
             if (!Arrays.asList(imageExtensions).contains(fileExtension)) {
-//                System.out.println(fileName + " " + refKey);
+                System.out.println("Load " + fileName + " " + refKey);
+                String last = refKey.split("_")[refKey.split("_").length - 1];
                 mapImageText.get(refKey).add(file.getPath());
             } else {
                 // Add image to files map
