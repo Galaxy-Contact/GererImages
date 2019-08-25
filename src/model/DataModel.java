@@ -112,8 +112,8 @@ public class DataModel {
         parsedData.put(champs[13], concat(htmlStrip(getCredit(splited)), cur));
         cur = parsedData.get(champs[12]);
         parsedData.put(champs[12], concat(getFL(splited), cur, " / "));
-        cur = parsedData.get(champs[17]);
-        parsedData.put(champs[17], concat(getTags(splited), cur));
+        cur = parsedData.get(champs[15]);
+        parsedData.put(champs[15], concat(getTags(splited), cur));
     }
 
     private String concat(String neww, String cur) {
@@ -405,16 +405,16 @@ public class DataModel {
 
         if (iptcDirectory != null) {
             String imageKey = getDes(iptcDirectory, IptcDirectory.TAG_KEYWORDS);
-            String textKey = parsedData.get(champs[17]);
+            String textKey = parsedData.get(champs[15]);
 
             if (textKey != null) {
                 if (imageKey != null) {
                     if (!imageKey.equals(textKey))
-                        parsedData.putIfAbsent(champs[17], imageKey + textKey);
+                        parsedData.putIfAbsent(champs[15], imageKey + textKey);
                 }
             }
 
-            parsedData.putIfAbsent(champs[17], imageKey);
+            parsedData.putIfAbsent(champs[15], imageKey);
         }
 
         if (fileDirectory != null) {

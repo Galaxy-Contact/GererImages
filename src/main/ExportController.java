@@ -38,9 +38,9 @@ public class ExportController implements ActionListener {
     private void concatAllInformation() {
         int length = data.size();
 
-        for (String champ : new String[] {champs[8], champs[17]}) {
+        for (String champ : new String[] {champs[8], champs[15]}) {
             String champKey = champ.substring(champ.indexOf("_") + 1, champ.lastIndexOf("_"));
-            if (champ.equals(champs[17]))
+            if (champ.equals(champs[15]))
                 champKey = "tags";
             for (int i = 0; i < length; i ++) {
                 HashMap<String, String> dm = data.get(i).getParsedData();

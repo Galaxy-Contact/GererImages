@@ -44,7 +44,7 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
             } else {
                 keyFileName = fileName;
             }
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             keyFileName = fileName;
         }
 
@@ -54,7 +54,7 @@ public class LoadFileTask extends SwingWorker<Void, Integer> {
             try {
                 Long.parseLong(keyFileName);
                 keyFileName = fileName.substring(0, fileName.lastIndexOf("_"));
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 keyFileName = fileName;
             }
         }
